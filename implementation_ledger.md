@@ -9,6 +9,7 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 | BP-003 | Add MIT LICENSE with generic contributors copyright | BP-001 | done | LICENSE is MIT; README links it; init does not copy it into targets | LICENSE; README.md; `bash tests/selftest.sh`; log 2026-11-04T08:54:04Z |
 | BP-002 | Install canonical skills into ~/.cursor/skills and ~/.agents/skills | BP-001 | done | Three skills readable via symlink from both homes | `./install-user-skills.sh`; SKILL.md via symlink; backup-20261104T082343Z; log 2026-11-04T08:24:03Z |
 | BP-001 | Create reusable ledger kit: skills, template, modules, init, checker | | done | Kit boots a target repo with profile, ledger, docs, and no overwrite | skills/; template/; modules/; init.sh; install-user-skills.sh; log 2026-11-04T08:23:09Z |
+| DOC-003 | Remove comparative-history section from the kit README | DOC-002 | done | README has no Design decisions / earlier-drift table; docs cite DOC-003 | README.md; docs/01-framework.md; `bash tests/selftest.sh`; log 2026-11-04T09:01:30Z |
 | DOC-002 | Strip private-project names from public-facing docs | DOC-001 | done | README, plan, and DOC-001 log name no private repos or product stacks | README.md; plan.md; docs/01-framework.md; `rtk rg` empty; log 2026-11-04T08:54:04Z |
 | DOC-001 | Framework README, plan, and docs/01-framework.md | BP-001 | done | README explains roles, bootstrap, review findings; docs cite IDs inline | README.md; plan.md; docs/01-framework.md; log 2026-11-04T08:23:09Z |
 | QA-001 | selftest for init and ledger_check | BP-001 | done | selftest inits with all modules, checker passes, re-init refuses, bad row fails | tests/selftest.sh; `bash tests/selftest.sh`; log 2026-11-04T08:23:09Z |
@@ -26,6 +27,10 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-04T09:01:30Z — Kit README has no comparative-history section (DOC-003)
+
+- Deleted the README Design decisions / earlier-drift table. docs/01-framework.md cites DOC-001, DOC-002, DOC-003 on install/run-only README.
 
 ### 2026-11-04T08:54:04Z — MIT LICENSE for the kit (BP-003)
 

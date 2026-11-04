@@ -105,22 +105,6 @@ Errors (nonzero exit): column count, duplicate/missing IDs, bad status, `done`/`
 
 Warnings: cell budgets, size over threshold, `done` IDs not cited in `docs/`.
 
-## Design decisions
-
-**Kept.** Document roles; Agent profile as the only per-repo input; five statuses with evidence; no `done` rollback; cell budgets; newest-first UTC log; `rg` recipes; verbatim archive; multi-environment evidence subsections; milestones table; checklists next to skills; ponytail; vendor-docs-bound behavior (here: `source-docs`); review reports that name severity, file:line, and the smallest fix.
-
-**Fixed in this kit.**
-
-| Earlier drift | Blueprint rule |
-|---|---|
-| `AGENTS.md` referenced `@RTK.md`, which does not exist | RTK lives only as `.cursor/rules/rtk.mdc` |
-| `.cursor/skills/` and `.agents/skills/` drifted (missing review skill; formatter stored as a rule copy with no `SKILL.md`) | One source: `.agents/skills/`, plus `.cursor/skills` symlink |
-| Ledger header has 6 columns, separator has 7 | Checker errors on column mismatch |
-| `plan.md` Architecture became a feature changelog of ~60 IDs | Plan template forbids per-feature task lists |
-| Task-to-doc index kept twice by hand (`Tasks:` headers, `docs/06` table) | Cite inline; checker warns on `done` IDs with no `docs/` cite |
-| Review skill hardcoded a product stack | `code-review` reads the profile `Review` block |
-| Ledger near the 100 KB archive threshold with no warning | Checker warns on size |
-
 ## Development of this kit
 
 ```bash
