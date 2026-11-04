@@ -1,0 +1,4 @@
+Sources
+- index `docs/sources/README.md`
+- pre-check: source-docs skill
+- rule: do not invent names or values absent from the sources

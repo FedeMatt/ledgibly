@@ -1,0 +1,6 @@
+Figma
+- fileKey `<fill me>`; page `<fill me>`; canvas <fill me>; inventory `docs/ui/screens.md`
+- target: <fill me: stack and version>; screens `<fill me>`; config `<fill me>`; forbidden: <fill me>
+- behavior source: `<fill me>` (wins over Figma on behavior)
+- out of scope: hidden frames, <fill me>
+- visual check: `<fill me>` when <fill me>

@@ -1,0 +1,17 @@
+---
+description: Bound features to canonical source docs under docs/sources. Do not invent names or values.
+globs:
+alwaysApply: true
+---
+
+# Source docs
+
+App features exist only because a file under `docs/sources/` describes them.
+
+Before adding UI, protocol work, or driver behavior:
+
+1. Open `docs/sources/README.md`.
+2. Open the matching vendor, spec, or protocol file.
+3. Implement only what those files describe.
+
+Do not invent instructions, opcodes, or field names. Use the source's names in software. Quote on-device or marketing labels only when citing that source.

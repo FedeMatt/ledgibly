@@ -1,0 +1,15 @@
+---
+description: Run the project formatter after editing matching files
+globs: <fill me: e.g. src/**/*.{ts,tsx,js,jsx,css,json,md}>
+alwaysApply: false
+---
+
+# Formatter
+
+After editing any matching file, run the project formatter before finishing:
+
+```
+<fill me: e.g. npx prettier --write <relative-path>>
+```
+
+Do not rely on manual indentation. Run the formatter after every edit, not only before committing.

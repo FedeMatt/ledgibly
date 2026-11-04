@@ -1,0 +1,20 @@
+---
+description: Use RTK to compress shell/CLI output and save tokens
+alwaysApply: true
+---
+
+# RTK (Rust Token Killer)
+
+Prefer RTK-wrapped shell commands so CLI output stays compact in context.
+
+When executing CLI commands, use the `rtk` prefix:
+
+- `git status` / `diff` / `log` / `add` / `commit` / `push` / `pull` → `rtk git ...`
+- `cat` / `head` / `tail` / file reads via shell → `rtk read ...`
+- `grep` / `rg` → `rtk grep ...` or `rtk rg ...`
+- `ls` / `find` → `rtk ls ...` / `rtk find ...`
+- `gh ...` → `rtk gh ...`
+- test runners (`pytest`, `cargo test`, `npm test`, etc.) → `rtk test ...` or `rtk cargo ...` / `rtk jest ...` as appropriate
+- When in doubt, prefix the CLI command with `rtk`
+
+Do not invent RTK subcommands. If unsure whether RTK supports a tool, run the plain command.
