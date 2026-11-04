@@ -6,6 +6,8 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
+| DOC-009 | README motivations: agents track work, tokens, bugs, product-owner role | DOC-008 | done | Motivations say the ledger is how the agent tracks the use case | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-04T14:07:57Z |
+| DOC-008 | Rewrite kit README: claim, what you can do, start here | DOC-007 | done | README leads with claim, capabilities, motivations, then clone and init | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-04T14:04:11Z |
 | DOC-007 | README opener: name meaning and how the kit works | DOC-006 | done | README opener explains Ledgibly (ledger + legible) and one-status-source workflow | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-04T13:57:54Z |
 | DOC-006 | Rename kit to Ledgibly in current docs, LICENSE, and GitHub repo | DOC-005 | done | Titles and LICENSE say Ledgibly; GitHub repo is ledgibly; selftest temp dir uses ledgibly | README.md; LICENSE; docs/01-framework.md; `gh repo view` FedeMatt/ledgibly; `bash tests/selftest.sh`; log 2026-11-04T13:56:12Z |
 | DOC-005 | Rewrite kit README opener; kit vs template vs this repo's ledger | DOC-004 | done | README opener names kit vs template vs this repo's ledger; README and plan.md do not call this repo a second product | README.md; plan.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-04T13:47:11Z |
@@ -35,6 +37,16 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-04T14:07:57Z — Motivations: agent as product owner of the use case (DOC-009)
+
+- README.md Motivations: one row and the recent log, fewer tokens, fewer invented stories, the assistant owns the use case.
+- docs/01-framework.md cites DOC-009.
+
+### 2026-11-04T14:04:11Z — README rewritten in ds4 voice (DOC-008)
+
+- README.md leads with a claim, what you can do, motivations, how to use the kit, then clone and init. Spec tables come after. ASCII diagram removed.
+- docs/01-framework.md cites DOC-008.
 
 ### 2026-11-04T13:57:54Z — README opener names the idea and the workflow (DOC-007)
 

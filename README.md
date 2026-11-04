@@ -1,38 +1,38 @@
 # Ledgibly
 
-**Ledgibly** gives your coding assistant a ledger + legible kit. At the moment only specialized for Cursor, agents keep a single task table (`implementation_ledger.md`) as the only place status is asserted, with evidence and a newest-first UTC log. Scope lives in `plan.md`; `docs/` explain how the system works and cite task IDs; `AGENTS.md` holds per-repo facts the skills read. Run [`init.sh`](init.sh) to copy that layout from [`template/`](template/) into a new repo (plan, ledger, docs, agent profile, checker). This repository uses the same roles to track kit work; a new project does not inherit this ledger's rows.
+**Ledgibly** aims to keep coding agents more reliable and makes them a better partner to tackle complex projects. The name comes from ledger + legible: one task table (`implementation_ledger.md`) is the only place status is asserted, with evidence and a newest-first UTC log. `plan.md` is the scope. `docs/` is how the system works. The README is install and run. Per-repo facts live in one `AGENTS.md` section so the skills stay generic. At the moment the kit is specialized for Cursor. Licensed under [MIT](LICENSE).
 
-## Document roles
+# So, what can I do with this software?
 
-One status source. Four files, four jobs:
+* Start a new repo that already has a plan, a ledger, docs, an agent profile, and a checker.
+* Give work a stable ID **before** anyone writes code. Cursor plan todos become rows first.
+* Require evidence for `done`: paths plus commands that passed. Status is not restated in docs or the README.
+* Install the same three skills (`keep-implementation-ledger`, `code-review`, `figma-ui`) into every machine you use for this work.
 
-| File | Job | Change when |
-|---|---|---|
-| `plan.md` | Scope and architecture | Scope or architecture changes, with user agreement |
-| `implementation_ledger.md` | Task table + UTC log. **Only** place status is asserted | Every task start/finish |
-| `docs/` | How the system works. Cite task IDs; never restate status | Behavior or structure changes |
-| `README.md` | Install and run | Those steps change |
+## Motivations
 
-`AGENTS.md` has a `## Agent profile` section. Skills read **only** that section for per-repo facts (paths, ID prefixes, verify commands, docs map, pre-checks). That is what makes the skills generic.
+* Status copied into several files drifts. One table does not.
+* A row plus a command that passed is easier to trust than a paragraph that says "done".
+* Agents read one row and the recent log, not the whole history. That is how they keep track of work so far, spend fewer tokens, and stop reviewing the full codebase to understand what to do.
+* The coding assistant becomes then also the product owner of the use case: the ledger is the development diary of the work.
+* The next project should start from [`template/`](template/), not from this repository's BP / DOC / QA rows.
 
+# How to use this project?
+
+This is a working template for the main case: Cursor, one ledger, a few skills. It does not try to cover every editor. If you have a coding agent, use it as the interface: the skills say when to add a row; `scripts/ledger_check.py` says when the table is wrong. Optional modules (`figma`, `source-docs`, `python-uv`, `formatter`, `database-design`, `rtk`) are overlays, not the default.
+
+## Start here
+
+```sh
+git clone https://github.com/FedeMatt/ledgibly.git
+cd ledgibly
+./install-user-skills.sh
+# ./install-user-skills.sh --copy    # if Cursor ignores symlinks
 ```
-plan.md (scope)
-    │
-    ▼
-implementation_ledger.md (status + evidence)
-    │
-    ├── docs/  (behavior, cite IDs)
-    └── README.md (install / run)
 
-AGENTS.md Agent profile ──► keep-implementation-ledger, code-review, figma-ui
-python3 scripts/ledger_check.py ──► table shape, IDs, evidence, log order
-```
+Then copy the kit into a new repo:
 
-Cursor plan todos become ledger rows with stable IDs **before** code is written.
-
-## Bootstrap a new repo
-
-```bash
+```sh
 ./init.sh /path/to/new-repo \
   --name MyApp \
   --prefixes "ART FE BE DOC QA" \
@@ -40,20 +40,22 @@ Cursor plan todos become ledger rows with stable IDs **before** code is written.
   --with figma,source-docs,python-uv,formatter,database-design,rtk
 ```
 
-`--with` is optional. Valid modules: `figma`, `source-docs`, `python-uv`, `formatter`, `database-design`, `rtk`.
+`--with` is optional. `init.sh` refuses to overwrite existing files. It copies `template/`, overlays modules, and replaces `{{PROJECT}}` / `{{PREFIXES}}` / `{{VERIFY}}` / `{{DATE}}` only in those copied files. It creates `.cursor/skills -> ../.agents/skills`, and prints remaining `<fill me>` lines. Seed rows use `ART-`; if `--prefixes` omits `ART`, init prepends it.
 
-`init.sh` refuses to overwrite existing files. It copies `template/`, overlays modules, and replaces `{{PROJECT}}` / `{{PREFIXES}}` / `{{VERIFY}}` / `{{DATE}}` only in those copied files. It creates `.cursor/skills -> ../.agents/skills`, and prints remaining `<fill me>` lines in `AGENTS.md`. Seed rows use `ART-`; if `--prefixes` omits `ART`, init prepends it.
+Fill the Agent profile (docs map, pre-checks, Review trace), then start from the first `pending` row.
 
-Then fill the Agent profile (docs map, pre-checks, Review trace) and start work from the first `pending` row.
+## Document roles
 
-## Canonical user-level skills
+Four files, four jobs. The ledger is the only status source.
 
-Install (or refresh) the skills this kit owns into your home directories. Existing copies are moved to a timestamped backup first:
+| File | Job | Change when |
+|---|---|---|
+| `plan.md` | Scope and architecture | Scope or architecture changes, with user agreement |
+| `implementation_ledger.md` | Task table + UTC log | Every task start/finish |
+| `docs/` | How the system works. Cite task IDs; never restate status | Behavior or structure changes |
+| `README.md` | Install and run | Those steps change |
 
-```bash
-./install-user-skills.sh
-# ./install-user-skills.sh --copy    # if Cursor ignores symlinks
-```
+Skills read **only** the `## Agent profile` section of `AGENTS.md` for per-repo facts.
 
 | Skill | When |
 |---|---|
@@ -81,17 +83,15 @@ scripts/ledger_check.py           Structural checks
 
 Numbered docs chapters use `[Index](README.md) · [ledger](...)`. Cite IDs inline. Do **not** keep a `Tasks:` header list or a coverage table; `rg -l '<ID>' docs/` and the checker cover that.
 
-## Ledger mechanics (short)
-
 Statuses, cell budgets, and `ledger_check.py` errors and warnings: [docs/01-framework.md](docs/01-framework.md).
 
-```bash
+```sh
 python3 scripts/ledger_check.py
 ```
 
 ## Development of this kit
 
-```bash
+```sh
 bash tests/selftest.sh
 python3 template/scripts/ledger_check.py
 ```
