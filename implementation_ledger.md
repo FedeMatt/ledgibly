@@ -1,4 +1,4 @@
-# project-blueprint Implementation Ledger
+# Ledgibly Implementation Ledger
 
 Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`, `blocked`, `done`, `superseded`. Older log entries and trimmed evidence: [archive](implementation_ledger_archive.md).
 
@@ -6,6 +6,8 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
+| DOC-007 | README opener: name meaning and how the kit works | DOC-006 | done | README opener explains Ledgibly (ledger + legible) and one-status-source workflow | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-04T13:57:54Z |
+| DOC-006 | Rename kit to Ledgibly in current docs, LICENSE, and GitHub repo | DOC-005 | done | Titles and LICENSE say Ledgibly; GitHub repo is ledgibly; selftest temp dir uses ledgibly | README.md; LICENSE; docs/01-framework.md; `gh repo view` FedeMatt/ledgibly; `bash tests/selftest.sh`; log 2026-11-04T13:56:12Z |
 | DOC-005 | Rewrite kit README opener; kit vs template vs this repo's ledger | DOC-004 | done | README opener names kit vs template vs this repo's ledger; README and plan.md do not call this repo a second product | README.md; plan.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-04T13:47:11Z |
 | BP-004 | init.sh: placeholders only in copied files; option values; prepend ART | BP-001 | done | init does not rewrite pre-existing files; missing option values error; PREFIXES always includes ART | init.sh; template/implementation_ledger.md; `bash tests/selftest.sh`; log 2026-11-04T09:17:23Z |
 | BP-005 | ledger_check: escaped pipes, superseded replacement, docs word-boundary | BP-001 | done | escaped pipes in cells parse; superseded ignores Dependencies; docs citations use word boundaries | template/scripts/ledger_check.py; skills/keep-implementation-ledger/reference.md; `bash tests/selftest.sh`; log 2026-11-04T09:17:23Z |
@@ -33,6 +35,16 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-04T13:57:54Z — README opener names the idea and the workflow (DOC-007)
+
+- README.md opener: Ledgibly is ledger + legible; one ledger table is the only status source; `init.sh` copies `template/`.
+- docs/01-framework.md cites DOC-007.
+
+### 2026-11-04T13:56:12Z — Kit renamed to Ledgibly (DOC-006)
+
+- Current titles, LICENSE, template, and keep-implementation-ledger skill say Ledgibly. selftest temp dirs use `ledgibly`.
+- GitHub repo is `FedeMatt/ledgibly` (`gh repo rename ledgibly --yes`). Older log entries still say project-blueprint.
 
 ### 2026-11-04T13:47:11Z — README opener names kit vs template (DOC-005)
 

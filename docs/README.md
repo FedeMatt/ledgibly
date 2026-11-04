@@ -1,4 +1,4 @@
-# project-blueprint docs
+# Ledgibly docs
 
 These pages explain how the kit works. Architecture decisions live in [`plan.md`](../plan.md). Task status lives only in [`implementation_ledger.md`](../implementation_ledger.md). Install and run: [`README.md`](../README.md).
 

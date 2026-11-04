@@ -1,4 +1,4 @@
-# project-blueprint Implementation Ledger Archive
+# Ledgibly Implementation Ledger Archive
 
 Moved verbatim from [implementation_ledger.md](implementation_ledger.md). Status lives only in the ledger.
 

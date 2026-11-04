@@ -1,4 +1,4 @@
-# project-blueprint approved plan
+# Ledgibly approved plan
 
 This file is the product and architecture baseline. Task status and evidence live in [`implementation_ledger.md`](implementation_ledger.md). How the kit works is in [`docs/README.md`](docs/README.md). Install and run: [`README.md`](README.md).
 

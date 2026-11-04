@@ -1,10 +1,6 @@
-# project-blueprint
+# Ledgibly
 
-A reusable **implementation ledger** framework for Cursor-driven repos. Licensed under [MIT](LICENSE).
-
-Run [`init.sh`](init.sh) to start a new repo with a plan, ledger, docs, agent profile, and checker. The files copied into that repo come from [`template/`](template/), not from this repository's own ledger.
-
-This repository uses the same document roles (`plan.md`, `implementation_ledger.md`, `docs/`) to track work on the kit itself.
+**Ledgibly** gives your coding assistant a ledger + legible kit. At the moment only specialized for Cursor, agents keep a single task table (`implementation_ledger.md`) as the only place status is asserted, with evidence and a newest-first UTC log. Scope lives in `plan.md`; `docs/` explain how the system works and cite task IDs; `AGENTS.md` holds per-repo facts the skills read. Run [`init.sh`](init.sh) to copy that layout from [`template/`](template/) into a new repo (plan, ledger, docs, agent profile, checker). This repository uses the same roles to track kit work; a new project does not inherit this ledger's rows.
 
 ## Document roles
 

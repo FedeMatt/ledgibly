@@ -1,4 +1,4 @@
-# project-blueprint agent notes
+# Ledgibly agent notes
 
 Product architecture: [`plan.md`](plan.md). Tasks, status, and evidence: [`implementation_ledger.md`](implementation_ledger.md) (the only status source). How the software is structured: [`docs/README.md`](docs/README.md). Install and run: [`README.md`](README.md).
 

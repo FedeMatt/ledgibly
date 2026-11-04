@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-TMP="$(mktemp -d "${TMPDIR:-/tmp}/project-blueprint.XXXXXX")"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/ledgibly.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
 if "$ROOT/init.sh" "$TMP/noval" --name 2>"$TMP/noval.err"; then
