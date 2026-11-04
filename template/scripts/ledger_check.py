@@ -21,11 +21,11 @@ EMPTY = frozenset({"", "-", "—", "–"})
 
 def split_row(line: str) -> list[str]:
     line = line.rstrip("\n").rstrip("\r")
-    if line.endswith("|"):
+    if line.endswith("|") and not line.endswith("\\|"):
         line = line[:-1]
     if line.startswith("|"):
         line = line[1:]
-    return [c.strip() for c in line.split("|")]
+    return [c.strip().replace("\\|", "|") for c in re.split(r"(?<!\\)\|", line)]
 
 
 def is_separator(line: str) -> bool:
@@ -107,7 +107,8 @@ def check_rows(
         if status == "superseded":
             others = [
                 m
-                for cell in cells[1:]
+                for i, cell in enumerate(cells)
+                if i != col["ID"] and i != col["Dependencies"]
                 for m in ID_IN_TEXT_RE.findall(cell)
                 if m != task_id
             ]
@@ -118,19 +119,20 @@ def check_rows(
             if len(value) > limit:
                 warnings.append(f"{task_id}: {name} is {len(value)} chars (budget {limit})")
 
+    skip_ids = {col["ID"], col["Dependencies"]}
     for task_id, cells in by_id.items():
         deps_raw = cells[col["Dependencies"]]
-        if empty(deps_raw):
-            continue
-        for dep in re.split(r"[,\s]+", deps_raw):
-            if not dep:
-                continue
-            if not ID_RE.fullmatch(dep):
-                errors.append(f"{task_id}: bad dependency {dep!r}")
-            elif dep not in by_id:
-                errors.append(f"{task_id}: dependency {dep} is not in the table")
+        if not empty(deps_raw):
+            for dep in re.split(r"[,\s]+", deps_raw):
+                if not dep:
+                    continue
+                if not ID_RE.fullmatch(dep):
+                    errors.append(f"{task_id}: bad dependency {dep!r}")
+                elif dep not in by_id:
+                    errors.append(f"{task_id}: dependency {dep} is not in the table")
         if cells[col["Status"]] == "superseded":
-            for other in ID_IN_TEXT_RE.findall(" ".join(cells[1:])):
+            named = " ".join(c for i, c in enumerate(cells) if i not in skip_ids)
+            for other in ID_IN_TEXT_RE.findall(named):
                 if other != task_id and other not in by_id:
                     errors.append(f"{task_id}: replacement {other} is not in the table")
                     break
@@ -172,7 +174,7 @@ def check_docs(docs: Path, by_id: dict[str, list[str]], header: list[str]) -> li
     blob = "\n".join(p.read_text(encoding="utf-8") for p in docs.rglob("*.md") if p.is_file())
     status_i = header.index("Status")
     for task_id, cells in by_id.items():
-        if cells[status_i] == "done" and task_id not in blob:
+        if cells[status_i] == "done" and not re.search(rf"\b{re.escape(task_id)}\b", blob):
             warnings.append(f"{task_id} is done but not cited in docs/")
     return warnings
 

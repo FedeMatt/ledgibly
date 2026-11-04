@@ -6,12 +6,18 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TMP="$(mktemp -d "${TMPDIR:-/tmp}/project-blueprint.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
+if "$ROOT/init.sh" "$TMP/noval" --name 2>"$TMP/noval.err"; then
+  echo "selftest: --name without a value should fail" >&2
+  exit 1
+fi
+grep -q 'needs a value' "$TMP/noval.err"
+
 APP="$TMP/app"
 "$ROOT/init.sh" "$APP" \
   --name DemoApp \
   --prefixes "ART FE BE DOC QA" \
   --verify "python3 scripts/ledger_check.py" \
-  --with figma,source-docs,python-uv,formatter,database-design
+  --with figma,source-docs,python-uv,formatter,database-design,rtk
 
 if leftover="$(grep -R -n -E '\{\{[A-Z][A-Z0-9_]*\}\}' "$APP" || true)" && [[ -n "$leftover" ]]; then
   echo "selftest: unreplaced placeholders:" >&2
@@ -27,12 +33,15 @@ test -f "$APP/.agents/skills/source-docs/SKILL.md"
 test -f "$APP/.agents/skills/python-uv-workflow/SKILL.md"
 test -f "$APP/.agents/skills/database-design/SKILL.md"
 test -f "$APP/.cursor/rules/formatting.mdc"
+test -f "$APP/.cursor/rules/rtk.mdc"
 grep -q 'DemoApp' "$APP/AGENTS.md"
 grep -q 'ART FE BE DOC QA' "$APP/AGENTS.md"
 grep -q '^fileKey' "$APP/AGENTS.md" || grep -q 'fileKey' "$APP/AGENTS.md"
 grep -q 'Sources' "$APP/AGENTS.md"
 grep -q 'docs/ui' "$APP/docs/README.md"
 grep -q 'docs/sources' "$APP/docs/README.md"
+grep -q 'Use when' "$APP/.agents/skills/python-uv-workflow/SKILL.md"
+grep -q 'Use when' "$APP/.agents/skills/database-design/SKILL.md"
 
 python3 "$APP/scripts/ledger_check.py" --root "$APP"
 
@@ -40,33 +49,136 @@ BARE="$TMP/bare"
 "$ROOT/init.sh" "$BARE" --name BareApp
 test ! -e "$BARE/docs/ui"
 test ! -f "$BARE/.agents/skills/source-docs/SKILL.md"
+test ! -f "$BARE/.cursor/rules/rtk.mdc"
 python3 "$BARE/scripts/ledger_check.py" --root "$BARE"
+
+EXIST="$TMP/existing"
+mkdir -p "$EXIST/src"
+printf '{{PROJECT}}\r\n' > "$EXIST/src/t.hbs"
+cp "$EXIST/src/t.hbs" "$TMP/t.hbs.orig"
+"$ROOT/init.sh" "$EXIST" --name ExistingApp
+cmp "$EXIST/src/t.hbs" "$TMP/t.hbs.orig"
+
+PFX="$TMP/pfx"
+"$ROOT/init.sh" "$PFX" --prefixes "FE BE"
+grep -q 'ID prefixes: ART FE BE' "$PFX/AGENTS.md"
+
+RTK="$TMP/rtkonly"
+"$ROOT/init.sh" "$RTK" --name RtkApp --with rtk
+test -f "$RTK/.cursor/rules/rtk.mdc"
 
 if "$ROOT/init.sh" "$APP" --name DemoApp --prefixes "ART DOC QA" --verify "true"; then
   echo "selftest: re-init should have refused to overwrite" >&2
   exit 1
 fi
 
-python3 - "$APP/implementation_ledger.md" <<'PY'
+replace_art002() {
+  local ledger="$1"
+  local new_row="$2"
+  python3 - "$ledger" "$new_row" <<'PY'
+from pathlib import Path
+import sys
+path = Path(sys.argv[1])
+new_row = sys.argv[2]
+if not new_row.endswith("\n"):
+    new_row += "\n"
+lines = path.read_text(encoding="utf-8").splitlines(True)
+out = []
+found = False
+for line in lines:
+    if line.startswith("| ART-002 |"):
+        out.append(new_row)
+        found = True
+    else:
+        out.append(line)
+if not found:
+    raise SystemExit("selftest: ART-002 row not found")
+path.write_text("".join(out), encoding="utf-8")
+PY
+}
+
+PIPE="$TMP/pipe"
+cp -R "$BARE" "$PIPE"
+replace_art002 "$PIPE/implementation_ledger.md" \
+  "| ART-002 | Operational implementation ledger | ART-001 | done | Ledger has Tasks table, UTC log, and checker passes | \`rg 'a\\|b' docs/\` passed |"
+python3 "$PIPE/scripts/ledger_check.py" --root "$PIPE"
+
+fail_case() {
+  local name="$1"
+  local dir="$TMP/$name"
+  cp -R "$BARE" "$dir"
+  case "$name" in
+    columns)
+      python3 - "$dir/implementation_ledger.md" <<'PY'
 from pathlib import Path
 import sys
 path = Path(sys.argv[1])
 lines = path.read_text(encoding="utf-8").splitlines(True)
 out = []
-inserted = False
+found = False
 for line in lines:
     out.append(line)
-    if not inserted and line.startswith("| ART-002 |"):
+    if not found and line.startswith("| ART-002 |"):
         out.append("| BAD | x | | done | y | z | extra |\n")
-        inserted = True
+        found = True
 path.write_text("".join(out), encoding="utf-8")
-if not inserted:
+if not found:
     raise SystemExit("selftest: ART-002 row not found")
 PY
+      ;;
+    no-evidence)
+      replace_art002 "$dir/implementation_ledger.md" \
+        "| ART-002 | Operational implementation ledger | ART-001 | done | Ledger has Tasks table, UTC log, and checker passes | |"
+      ;;
+    superseded-dep)
+      python3 - "$dir/implementation_ledger.md" <<'PY'
+from pathlib import Path
+import sys
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+needle = "| ART-002 |"
+if needle not in text:
+    raise SystemExit("selftest: ART-002 row not found")
+text = text.replace(
+    needle,
+    "| ART-003 | replaced | ART-002 | superseded | leftover | |\n" + needle,
+    1,
+)
+path.write_text(text, encoding="utf-8")
+PY
+      ;;
+    log-order)
+      python3 - "$dir/implementation_ledger.md" <<'PY'
+from pathlib import Path
+import sys
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+marker = "## Chronological UTC Log"
+idx = text.find(marker)
+if idx < 0:
+    raise SystemExit("selftest: log heading not found")
+nl = text.find("\n", idx)
+extra = (
+    "\n\n### 2020-01-01T00:00:00Z — old (ART-002)\n\n"
+    "### 2021-01-01T00:00:00Z — newer (ART-002)\n"
+)
+path.write_text(text[: nl + 1] + extra + text[nl + 1 :], encoding="utf-8")
+PY
+      ;;
+    *)
+      echo "selftest: unknown fail case $name" >&2
+      exit 1
+      ;;
+  esac
+  if python3 "$dir/scripts/ledger_check.py" --root "$dir"; then
+    echo "selftest: $name should have failed" >&2
+    exit 1
+  fi
+}
 
-if python3 "$APP/scripts/ledger_check.py" --root "$APP"; then
-  echo "selftest: checker should have failed on a malformed row" >&2
-  exit 1
-fi
+fail_case columns
+fail_case no-evidence
+fail_case superseded-dep
+fail_case log-order
 
 echo "selftest: ok"

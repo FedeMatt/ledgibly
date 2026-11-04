@@ -6,6 +6,11 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
+| BP-004 | init.sh: placeholders only in copied files; option values; prepend ART | BP-001 | done | init does not rewrite pre-existing files; missing option values error; PREFIXES always includes ART | init.sh; template/implementation_ledger.md; `bash tests/selftest.sh`; log 2026-11-04T09:17:23Z |
+| BP-005 | ledger_check: escaped pipes, superseded replacement, docs word-boundary | BP-001 | done | escaped pipes in cells parse; superseded ignores Dependencies; docs citations use word boundaries | template/scripts/ledger_check.py; skills/keep-implementation-ledger/reference.md; `bash tests/selftest.sh`; log 2026-11-04T09:17:23Z |
+| BP-006 | Move rtk.mdc to modules/rtk; add Use-when to python-uv and database-design | BP-001 | done | Bare init has no rtk.mdc; --with rtk adds it; those two skills have Use when in description | modules/rtk/; python-uv and database-design SKILL.md; `bash tests/selftest.sh`; log 2026-11-04T09:17:23Z |
+| QA-002 | selftest covers existing-dir init, escaped pipes, failure fixtures, rtk | BP-004, BP-005, BP-006 | done | selftest asserts byte-identical user file, escaped pipe pass, three checker failures, rtk opt-in | tests/selftest.sh; `bash tests/selftest.sh`; log 2026-11-04T09:17:23Z |
+| DOC-004 | Move checker error list into docs; README links it; cite new IDs | BP-004, BP-005, BP-006 | done | docs/01-framework.md lists checker errors/warnings and rtk module; README has no error list | docs/01-framework.md; README.md; plan.md; `bash tests/selftest.sh`; log 2026-11-04T09:17:23Z |
 | BP-003 | Add MIT LICENSE with generic contributors copyright | BP-001 | done | LICENSE is MIT; README links it; init does not copy it into targets | LICENSE; README.md; `bash tests/selftest.sh`; log 2026-11-04T08:54:04Z |
 | BP-002 | Install canonical skills into ~/.cursor/skills and ~/.agents/skills | BP-001 | done | Three skills readable via symlink from both homes | `./install-user-skills.sh`; SKILL.md via symlink; backup-20261104T082343Z; log 2026-11-04T08:24:03Z |
 | BP-001 | Create reusable ledger kit: skills, template, modules, init, checker | | done | Kit boots a target repo with profile, ledger, docs, and no overwrite | skills/; template/; modules/; init.sh; install-user-skills.sh; log 2026-11-04T08:23:09Z |
@@ -27,6 +32,32 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-04T09:17:23Z — Checker error list lives in docs (DOC-004)
+
+- docs/01-framework.md lists checker errors/warnings, escaped pipes, rtk module, and init placeholder scope.
+- README.md Bootstrap lists rtk; Ledger mechanics links the docs chapter. plan.md Architecture lists rtk as a module.
+
+### 2026-11-04T09:17:23Z — selftest covers init and checker edge cases (QA-002)
+
+- tests/selftest.sh: existing-dir `src/t.hbs` stays byte-identical; escaped pipe evidence passes; missing `--name` value fails; ART prepended to prefixes.
+- Failure fixtures: 7-column row, `done` without evidence, superseded with only a dependency, log not newest-first.
+- Bare init has no rtk.mdc; `--with rtk` adds it. `bash tests/selftest.sh` printed `selftest: ok`.
+
+### 2026-11-04T09:17:23Z — rtk is an opt-in module (BP-006)
+
+- Moved template/.cursor/rules/rtk.mdc to modules/rtk/.cursor/rules/rtk.mdc.
+- python-uv-workflow and database-design skill descriptions include "Use when".
+
+### 2026-11-04T09:17:23Z — ledger_check handles escaped pipes and docs IDs (BP-005)
+
+- split_row splits on unescaped `|`; superseded replacement IDs ignore Dependencies; docs citation uses word boundaries.
+- reference.md: escape `|` in cells as `\|`.
+
+### 2026-11-04T09:17:23Z — init.sh only rewrites copied files (BP-004)
+
+- Placeholders run only on paths copy_tree wrote. Missing option values print `needs a value`. PREFIXES without ART gets ART prepended.
+- Seeded ART-001 is pending until plan.md and AGENTS.md have no `<fill me>`.
 
 ### 2026-11-04T09:01:30Z — Kit README has no comparative-history section (DOC-003)
 

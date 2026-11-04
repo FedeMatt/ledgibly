@@ -11,8 +11,8 @@ A reusable implementation-ledger framework for Cursor-driven repos: templates, c
 ## Architecture
 
 - `skills/` — canonical user-level skills (`keep-implementation-ledger`, `code-review`, `figma-ui`). Installed into `~/.cursor/skills` and `~/.agents/skills`.
-- `template/` — files `init.sh` copies into a target repo (AGENTS.md profile, plan, ledger, docs, ponytail, rtk, checker).
-- `modules/` — opt-in overlays (`figma`, `source-docs`, `python-uv`, `formatter`, `database-design`).
+- `template/` — files `init.sh` copies into a target repo (AGENTS.md profile, plan, ledger, docs, ponytail, checker).
+- `modules/` — opt-in overlays (`figma`, `source-docs`, `python-uv`, `formatter`, `database-design`, `rtk`).
 - `init.sh` — copy, overlay, placeholder replace, `.cursor/skills` symlink, no overwrite.
 - `template/scripts/ledger_check.py` — structural ledger checks (stdlib only).
 - This repo dogfoods the same document roles with prefixes BP / DOC / QA.

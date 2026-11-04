@@ -1,6 +1,6 @@
 ---
 name: python-uv-workflow
-description: Standardizes Python operations using the uv package manager for speed and reliability.
+description: Standardizes Python operations using the uv package manager for speed and reliability. Use when adding, removing, or running Python packages, tests, or PEP 723 scripts in a uv project.
 ---
 
 ## General Python Execution

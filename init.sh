@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
-VALID_MODULES="figma source-docs python-uv formatter database-design"
+VALID_MODULES="figma source-docs python-uv formatter database-design rtk"
 
 usage() {
   cat <<'EOF'
@@ -12,13 +12,20 @@ Usage: init.sh <target-dir> [options]
   --name NAME           Project name (default: basename of target-dir)
   --prefixes "A B C"    ID prefixes (default: ART DOC QA)
   --verify "cmd"        Profile verify command (default: python3 scripts/ledger_check.py)
-  --with a,b            Modules: figma,source-docs,python-uv,formatter,database-design
+  --with a,b            Modules: figma,source-docs,python-uv,formatter,database-design,rtk
   -h, --help
 
 Copies template/, overlays modules, replaces {{PROJECT}} {{PREFIXES}} {{VERIFY}} {{DATE}},
 creates .cursor/skills -> ../.agents/skills, and prints remaining <fill me> lines.
 Refuses to overwrite existing files.
 EOF
+}
+
+need_value() {
+  if [[ $# -lt 2 ]]; then
+    echo "init.sh: $1 needs a value" >&2
+    exit 1
+  fi
 }
 
 TARGET=""
@@ -30,19 +37,23 @@ WITH=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --name)
-      NAME="${2:-}"
+      need_value "$@"
+      NAME="$2"
       shift 2
       ;;
     --prefixes)
-      PREFIXES="${2:-}"
+      need_value "$@"
+      PREFIXES="$2"
       shift 2
       ;;
     --verify)
-      VERIFY="${2:-}"
+      need_value "$@"
+      VERIFY="$2"
       shift 2
       ;;
     --with)
-      WITH="${2:-}"
+      need_value "$@"
+      WITH="$2"
       shift 2
       ;;
     -h|--help)
@@ -80,6 +91,11 @@ TARGET="$(cd "$TARGET" && pwd)"
 if [[ -z "$NAME" ]]; then
   NAME="$(basename "$TARGET")"
 fi
+
+case " $PREFIXES " in
+  *" ART "*) ;;
+  *) PREFIXES="ART $PREFIXES" ;;
+esac
 
 MODULES=()
 raw_modules=()
@@ -131,6 +147,7 @@ if [[ ${#existing[@]} -gt 0 ]]; then
   exit 1
 fi
 
+copied=()
 copy_tree() {
   local src="${1%/}"
   local f rel dest
@@ -140,6 +157,7 @@ copy_tree() {
     dest="$TARGET/$rel"
     mkdir -p "$(dirname "$dest")"
     cp "$f" "$dest"
+    copied+=("$dest")
   done < <(list_files "$src")
 }
 
@@ -159,13 +177,19 @@ done
 DATE_UTC="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 export BP_PROJECT="$NAME" BP_PREFIXES="$PREFIXES" BP_VERIFY="$VERIFY" BP_DATE="$DATE_UTC"
 
-python3 - "$TARGET" ${fragments[@]+"${fragments[@]}"} <<'PY'
+python3 - "$TARGET" "${#fragments[@]}" ${fragments[@]+"${fragments[@]}"} -- ${copied[@]+"${copied[@]}"} <<'PY'
 import os
 import sys
 from pathlib import Path
 
-target = Path(sys.argv[1])
-fragments = [Path(p) for p in sys.argv[2:]]
+args = sys.argv[1:]
+target = Path(args[0])
+n_frag = int(args[1])
+fragments = [Path(p) for p in args[2 : 2 + n_frag]]
+rest = args[2 + n_frag :]
+if rest[:1] == ["--"]:
+    rest = rest[1:]
+copied = [Path(p) for p in rest]
 agents = target / "AGENTS.md"
 if fragments:
     marker = "<!-- end:agent-profile -->"
@@ -183,7 +207,7 @@ repl = {
     "{{VERIFY}}": os.environ["BP_VERIFY"],
     "{{DATE}}": os.environ["BP_DATE"],
 }
-for path in target.rglob("*"):
+for path in copied:
     if not path.is_file() or path.is_symlink():
         continue
     try:

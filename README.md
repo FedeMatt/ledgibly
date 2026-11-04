@@ -42,12 +42,12 @@ Cursor plan todos become ledger rows with stable IDs **before** code is written.
   --name MyApp \
   --prefixes "ART FE BE DOC QA" \
   --verify "cd frontend && npm test" \
-  --with figma,source-docs,python-uv,formatter,database-design
+  --with figma,source-docs,python-uv,formatter,database-design,rtk
 ```
 
-`--with` is optional. Valid modules: `figma`, `source-docs`, `python-uv`, `formatter`, `database-design`.
+`--with` is optional. Valid modules: `figma`, `source-docs`, `python-uv`, `formatter`, `database-design`, `rtk`.
 
-`init.sh` refuses to overwrite existing files. It copies `template/`, overlays modules, replaces `{{PROJECT}}` / `{{PREFIXES}}` / `{{VERIFY}}` / `{{DATE}}`, creates `.cursor/skills -> ../.agents/skills`, and prints remaining `<fill me>` lines in `AGENTS.md`.
+`init.sh` refuses to overwrite existing files. It copies `template/`, overlays modules, and replaces `{{PROJECT}}` / `{{PREFIXES}}` / `{{VERIFY}}` / `{{DATE}}` only in those copied files. It creates `.cursor/skills -> ../.agents/skills`, and prints remaining `<fill me>` lines in `AGENTS.md`. Seed rows use `ART-`; if `--prefixes` omits `ART`, init prepends it.
 
 Then fill the Agent profile (docs map, pre-checks, Review trace) and start work from the first `pending` row.
 
@@ -79,7 +79,6 @@ README.md                         Install and run
 docs/README.md                    Chapter index
 docs/01-architecture.md           First chapter
 .cursor/rules/ponytail.mdc        Lazy-senior-dev ladder
-.cursor/rules/rtk.mdc             Compact CLI via rtk
 .agents/skills/                   Project skills (modules add more)
 .cursor/skills -> ../.agents/skills
 scripts/ledger_check.py           Structural checks
@@ -89,21 +88,11 @@ Numbered docs chapters use `[Index](README.md) · [ledger](...)`. Cite IDs inlin
 
 ## Ledger mechanics (short)
 
-- Stable IDs: `PREFIX-NNN` (next free number for that prefix).
-- Statuses: `pending` \| `in_progress` \| `blocked` \| `done` \| `superseded`.
-- `done` needs evidence (paths + commands that passed). Never flip `done` back; add a follow-up ID.
-- Cell budgets: description 120, acceptance 200, evidence 300. Narrative goes in the log.
-- Log is newest-first UTC, inserted directly under the log heading.
-- Agents never read the whole ledger; they `rg` one row, open work, or a log heading.
-- Above 100 KB, propose archiving the oldest log entries verbatim. Never archive unprompted.
+Statuses, cell budgets, and `ledger_check.py` errors and warnings: [docs/01-framework.md](docs/01-framework.md).
 
 ```bash
 python3 scripts/ledger_check.py
 ```
-
-Errors (nonzero exit): column count, duplicate/missing IDs, bad status, `done`/`blocked` without evidence, `superseded` without a replacement ID, missing dependencies, log heading format, log not newest-first.
-
-Warnings: cell budgets, size over threshold, `done` IDs not cited in `docs/`.
 
 ## Development of this kit
 

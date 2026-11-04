@@ -1,6 +1,6 @@
 ---
 name: database-design
-description: Design database schemas — tables, relationships, indexes, constraints, and ORM setup. Covers relational design, normalization, and common patterns.
+description: Design database schemas — tables, relationships, indexes, constraints, and ORM setup. Use when adding or changing tables, FKs, indexes, or Prisma/Drizzle models.
 ---
 
 # Database Design

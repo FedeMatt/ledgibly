@@ -67,6 +67,8 @@ Newest first. Older entries: [archive](implementation_ledger_archive.md).
 | FE-097 | <≤120 chars> | FE-096 | pending | <≤200 chars, testable> | <≤300 chars: paths; commands; log 2026-10-01T02:00:00Z> |
 ```
 
+Escape `|` in cells as `\|`.
+
 ## Log entry
 
 Insert directly under the log heading (newest first). At most 6 bullets.

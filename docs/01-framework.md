@@ -13,4 +13,16 @@ project-blueprint is a kit, not an application (BP-001). Four files, four jobs:
 
 Per-repo facts live in `AGENTS.md` `## Agent profile`. Skills read only that section.
 
-`init.sh` copies `template/` into a target, overlays `modules/` when `--with` is passed, replaces placeholders, and refuses to overwrite (DOC-001). The kit README is install/run only (DOC-001, DOC-002, DOC-003). `python3 scripts/ledger_check.py` (after init) or `python3 template/scripts/ledger_check.py` (this repo) checks table shape, IDs, statuses, evidence, dependencies, and log order (QA-001). `install-user-skills.sh` symlinks the canonical skills into `~/.cursor/skills` and `~/.agents/skills` (BP-002). The kit is MIT-licensed; `init.sh` does not copy `LICENSE` into a target (BP-003).
+`init.sh` copies `template/` into a target, overlays `modules/` when `--with` is passed, replaces placeholders only in copied files, and refuses to overwrite (DOC-001, BP-004). Missing `--name` / `--prefixes` / `--verify` / `--with` values are errors. Seed rows use `ART-`; if `--prefixes` omits `ART`, init prepends it (BP-004). ART-001 is seeded `pending` until `plan.md` and `AGENTS.md` have no `<fill me>`. Optional modules: `figma`, `source-docs`, `python-uv`, `formatter`, `database-design`, `rtk` (BP-006). The kit README is install/run only (DOC-001, DOC-002, DOC-003, DOC-004). `python3 scripts/ledger_check.py` (after init) or `python3 template/scripts/ledger_check.py` (this repo) checks table shape, IDs, statuses, evidence, dependencies, and log order (QA-001, BP-005, QA-002). `install-user-skills.sh` symlinks the canonical skills into `~/.cursor/skills` and `~/.agents/skills` (BP-002). The kit is MIT-licensed; `init.sh` does not copy `LICENSE` into a target (BP-003).
+
+Ledger rules:
+
+- Stable IDs: `PREFIX-NNN`. Statuses: `pending`, `in_progress`, `blocked`, `done`, `superseded`.
+- `done` needs evidence (paths + commands that passed). Never flip `done` back; add a follow-up ID.
+- Escape `|` in cells as `\|` (BP-005).
+- Cell budgets: description 120, acceptance 200, evidence 300. Narrative goes in the log.
+- Log is newest-first UTC. Above 100 KB, propose archiving the oldest log entries verbatim.
+
+Checker errors (nonzero exit): column count, duplicate/missing IDs, bad status, `done`/`blocked` without evidence, `superseded` without a replacement ID outside Dependencies, missing dependencies, log not newest-first.
+
+Checker warnings: cell budgets, size over threshold, `done` IDs not cited in `docs/` (word-boundary match).

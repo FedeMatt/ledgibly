@@ -6,7 +6,7 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
-| ART-001 | Approve product and architecture baseline | | done | plan.md records product, architecture, policy, and out-of-scope | plan.md; log {{DATE}} |
+| ART-001 | Approve product and architecture baseline | | pending | plan.md and AGENTS.md have no `<fill me>` | |
 | ART-002 | Operational implementation ledger | ART-001 | done | Ledger has Tasks table, UTC log, and checker passes | implementation_ledger.md; `python3 scripts/ledger_check.py`; log {{DATE}} |
 
 ## Environment evidence
