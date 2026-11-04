@@ -15,7 +15,7 @@ A reusable implementation-ledger framework for Cursor-driven repos: templates, c
 - `modules/` — opt-in overlays (`figma`, `source-docs`, `python-uv`, `formatter`, `database-design`, `rtk`).
 - `init.sh` — copy, overlay, placeholder replace, `.cursor/skills` symlink, no overwrite.
 - `template/scripts/ledger_check.py` — structural ledger checks (stdlib only).
-- This repo dogfoods the same document roles with prefixes BP / DOC / QA.
+- This repository tracks kit work with the same document roles and prefixes BP / DOC / QA.
 
 ## Development policy
 

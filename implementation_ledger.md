@@ -6,6 +6,7 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
+| DOC-005 | Rewrite kit README opener; kit vs template vs this repo's ledger | DOC-004 | done | README opener names kit vs template vs this repo's ledger; README and plan.md do not call this repo a second product | README.md; plan.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-04T13:47:11Z |
 | BP-004 | init.sh: placeholders only in copied files; option values; prepend ART | BP-001 | done | init does not rewrite pre-existing files; missing option values error; PREFIXES always includes ART | init.sh; template/implementation_ledger.md; `bash tests/selftest.sh`; log 2026-11-04T09:17:23Z |
 | BP-005 | ledger_check: escaped pipes, superseded replacement, docs word-boundary | BP-001 | done | escaped pipes in cells parse; superseded ignores Dependencies; docs citations use word boundaries | template/scripts/ledger_check.py; skills/keep-implementation-ledger/reference.md; `bash tests/selftest.sh`; log 2026-11-04T09:17:23Z |
 | BP-006 | Move rtk.mdc to modules/rtk; add Use-when to python-uv and database-design | BP-001 | done | Bare init has no rtk.mdc; --with rtk adds it; those two skills have Use when in description | modules/rtk/; python-uv and database-design SKILL.md; `bash tests/selftest.sh`; log 2026-11-04T09:17:23Z |
@@ -32,6 +33,11 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-04T13:47:11Z — README opener names kit vs template (DOC-005)
+
+- README.md opener: `init.sh` copies `template/`, not this repository's ledger. Same document roles track kit work.
+- plan.md Architecture uses the same wording. docs/01-framework.md cites DOC-005.
 
 ### 2026-11-04T09:17:23Z — Checker error list lives in docs (DOC-004)
 

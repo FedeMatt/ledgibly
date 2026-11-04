@@ -2,10 +2,9 @@
 
 A reusable **implementation ledger** framework for Cursor-driven repos. Licensed under [MIT](LICENSE).
 
-This repo is two things:
+Run [`init.sh`](init.sh) to start a new repo with a plan, ledger, docs, agent profile, and checker. The files copied into that repo come from [`template/`](template/), not from this repository's own ledger.
 
-1. A **kit** you copy into a target repo with `init.sh`.
-2. A **dogfood** of that kit (this repo's own `AGENTS.md`, `plan.md`, and `implementation_ledger.md`).
+This repository uses the same document roles (`plan.md`, `implementation_ledger.md`, `docs/`) to track work on the kit itself.
 
 ## Document roles
 
