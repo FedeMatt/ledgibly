@@ -1,6 +1,28 @@
+<p align="center">
+  <img src="brand/ledgibly.png" alt="Ledgibly" width="160" />
+</p>
+
+<p align="center">
+  <em>A ledger kit for Cursor agents.</em>
+</p>
+
+<p align="center">
+  <a href="docs/README.md">Docs</a>
+  ·
+  <a href="template/">Template</a>
+  ·
+  <a href="skills/">Skills</a>
+  ·
+  <a href="modules/">Modules</a>
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" /></a>
+</p>
+
 # Ledgibly
 
-**Ledgibly** aims to keep coding agents more reliable and makes them a better partner to tackle complex projects. The name comes from ledger + legible: one task table (`implementation_ledger.md`) is the only place status is asserted, with evidence and a newest-first UTC log. `plan.md` is the scope. `docs/` is how the system works. The README is install and run. Per-repo facts live in one `AGENTS.md` section so the skills stay generic. At the moment the kit is specialized for Cursor. Licensed under [MIT](LICENSE).
+**Ledgibly** aims to keep coding agents more reliable and makes them a better partner to tackle complex projects. The name comes from ledger + legible: one task table (`implementation_ledger.md`) is the only place status is asserted, with evidence and a newest-first UTC log. `plan.md` is the scope. `docs/` is how the system works. The README is install and run. Per-repo facts live in one `AGENTS.md` section so the skills stay generic. At the moment the kit is specialized for Cursor.
 
 # So, what can I do with this software?
 

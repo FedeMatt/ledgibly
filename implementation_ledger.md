@@ -6,6 +6,8 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
+| DOC-011 | README header: pitch, Docs/Template/Skills/Modules nav, MIT badge | DOC-010 | done | README has centered nav and MIT shield under the logo | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-05T02:56:48Z |
+| DOC-010 | Add brand/ledgibly.png and show it at the top of the README | DOC-009 | done | README shows brand/ledgibly.png above the title; brand/ is tracked | brand/ledgibly.png; README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-05T02:52:25Z |
 | DOC-009 | README motivations: agents track work, tokens, bugs, product-owner role | DOC-008 | done | Motivations say the ledger is how the agent tracks the use case | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-04T14:07:57Z |
 | DOC-008 | Rewrite kit README: claim, what you can do, start here | DOC-007 | done | README leads with claim, capabilities, motivations, then clone and init | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-04T14:04:11Z |
 | DOC-007 | README opener: name meaning and how the kit works | DOC-006 | done | README opener explains Ledgibly (ledger + legible) and one-status-source workflow | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-04T13:57:54Z |
@@ -37,6 +39,15 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-05T02:56:48Z — README header has nav and MIT badge (DOC-011)
+
+- README.md: centered pitch, Docs/Template/Skills/Modules links, MIT shield under the logo. Opener no longer repeats the license line.
+- docs/01-framework.md cites DOC-011.
+
+### 2026-11-05T02:52:25Z — README shows Ledgibly brand mark (DOC-010)
+
+- Copied primary logo to brand/ledgibly.png. README.md centers it above the title. docs/01-framework.md cites DOC-010.
 
 ### 2026-11-04T14:07:57Z — Motivations: agent as product owner of the use case (DOC-009)
 
