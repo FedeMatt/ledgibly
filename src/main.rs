@@ -81,13 +81,11 @@ fn main() -> ExitCode {
             verify,
             with,
         }),
-        Commands::InstallSkills { force, claude } => {
-            skills::run(skills::InstallSkillsOptions {
-                force,
-                claude,
-                home: None,
-            })
-        }
+        Commands::InstallSkills { force, claude } => skills::run(skills::InstallSkillsOptions {
+            force,
+            claude,
+            home: None,
+        }),
     };
 
     match result {
