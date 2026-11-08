@@ -23,11 +23,17 @@ jobs:
 
   linux:
     needs: [gate]
-    runs-on: ubuntu-24.04
+    # Native runners avoid maturin-action's aarch64 cross container, which flakes on
+    # curl|tar of the maturin release (gzip: stdin: not in gzip format → docker exit 2).
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        target: [x86_64, aarch64]
+        include:
+          - target: x86_64
+            os: ubuntu-24.04
+          - target: aarch64
+            os: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
       - uses: PyO3/maturin-action@v1
