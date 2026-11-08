@@ -6,9 +6,10 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
+| DOC-015 | Restore short README opener and refresh PyPI badge URL | DOC-014 | done | Tagline and ledger+legible opener restored; badge uses logo=pypi; Start here still uv tool install | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:08:25Z |
 | BP-011 | First PyPI release: Trusted Publishing + tag v0.1.0 | QA-003 | done | `uv tool install ledgibly` installs 0.1.0; pypi.org/project/ledgibly/0.1.0 exists | tag v0.1.0; Release run 42461088507; `uv tool install ledgibly`; `ledgibly --version`; log 2026-11-08T08:03:03Z |
 | DOC-014 | README PyPI version badge after the package is live | BP-011 | done | README shows a PyPI badge; Start here still `uv tool install ledgibly` | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:03:03Z |
-| QA-005 | CI asserts sdist payload includes hidden template files | QA-003 | pending | CI fails if `template/.cursor/rules/ponytail.mdc` is missing from `cargo package --list` | |
+| QA-005 | CI asserts sdist payload includes hidden template files | QA-003 | done | CI fails if `template/.cursor/rules/ponytail.mdc` is missing from `cargo package --list` | .github/workflows/ci.yml sdist payload; `cargo package --list \| grep ponytail`; log 2026-11-08T08:08:25Z |
 | BP-007 | Scaffold Rust CLI: Cargo.toml, maturin bin wheel, clap, rust-embed | | done | cargo build; Template embeds .cursor/rules/ponytail.mdc and .gitignore; ledgibly --help works | Cargo.toml; pyproject.toml; src/; `cargo test`; log 2026-11-08T07:20:09Z |
 | BP-008 | Port init.sh to ledgibly init with same flags and no-overwrite | BP-007 | done | bash tests/selftest.sh passes against target/debug/ledgibly | src/init.rs; tests/selftest.sh; `bash tests/selftest.sh`; log 2026-11-08T07:20:09Z |
 | BP-009 | Port install-skills as copy-from-embed into ~/.cursor and ~/.agents | BP-007 | done | Fake-HOME selftest installs three skills with backup | src/skills.rs; tests/selftest.sh; `bash tests/selftest.sh`; log 2026-11-08T07:20:09Z |
@@ -51,6 +52,14 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-08T08:08:25Z — CI asserts sdist includes ponytail.mdc (QA-005)
+
+- `.github/workflows/ci.yml`: `cargo package --list | grep -F 'template/.cursor/rules/ponytail.mdc'` after ledger_check.
+
+### 2026-11-08T08:08:25Z — Restored short README opener and refreshed badge (DOC-015)
+
+- README.md: tagline and `23ef4d1` ledger+legible opener; PyPI badge URL uses `?logo=pypi` to bust Camo cache. docs/01-framework.md cites DOC-015.
 
 ### 2026-11-08T08:03:03Z — README shows PyPI version badge (DOC-014)
 

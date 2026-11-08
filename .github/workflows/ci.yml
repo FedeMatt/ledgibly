@@ -24,3 +24,5 @@ jobs:
         run: bash tests/selftest.sh
       - name: ledger_check
         run: python3 template/scripts/ledger_check.py
+      - name: sdist payload
+        run: cargo package --list | grep -F 'template/.cursor/rules/ponytail.mdc'

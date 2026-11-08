@@ -3,6 +3,10 @@
 </p>
 
 <p align="center">
+  <em>A ledger kit for Cursor agents.</em>
+</p>
+
+<p align="center">
   <a href="docs/README.md">Docs</a>
   ·
   <a href="template/">Template</a>
@@ -13,17 +17,13 @@
 </p>
 
 <p align="center">
-  <a href="https://pypi.org/project/ledgibly/"><img src="https://img.shields.io/pypi/v/ledgibly.svg" alt="PyPI version" /></a>
+  <a href="https://pypi.org/project/ledgibly/"><img src="https://img.shields.io/pypi/v/ledgibly?logo=pypi" alt="PyPI version" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" /></a>
 </p>
 
 # Ledgibly
 
-With the widespread adoption of coding assistants, developers are spending less time reviewing code and more time ideating and creating new and better programs.
-
-This has completely changed the way of coding, and new problems have arisen: programmers have very low visibility on the code details, agents perform extensive code reviews by consuming tokens before working on a new request; when a conversation chat is closed and a new one opened, the previous context is lost and everything starts from zero; developers have to keep in mind architectural decisions, backlog, and current status. Skills and memory layers partially solve these problems, but still don't make coding agents a reliable partner to tackle complex projects.
-
-**Ledgibly** tries to solve it by adding a layer between developers and an agent harness. The setup is very simple, as the name suggests, it makes a repository legible by using a ledger: one task table (`implementation_ledger.md`) is the only place status is asserted, with evidence and a newest-first UTC log. `plan.md` is the scope. `docs/` tracks how the system works. The README is install and run. Per-repo facts live in one `AGENTS.md` section so the skills stay generic. At the moment the kit is specialized for Cursor.
+**Ledgibly** aims to keep coding agents more reliable and makes them a better partner to tackle complex projects. The name comes from ledger + legible: one task table (`implementation_ledger.md`) is the only place status is asserted, with evidence and a newest-first UTC log. `plan.md` is the scope. `docs/` is how the system works. The README is install and run. Per-repo facts live in one `AGENTS.md` section so the skills stay generic. At the moment the kit is specialized for Cursor.
 
 # So, what can I do with this software?
 
