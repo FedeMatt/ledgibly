@@ -6,6 +6,7 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
+| BP-034 | Patch release v0.1.3 so PyPI ships hub-only adapters and review fixes | BP-030, BP-033, QA-007 | in_progress | pypi.org/project/ledgibly/0.1.3 exists | |
 | DOC-019 | Harness docs cite vendor URLs; plan.md records hub-only skills and no .cursor/skills link | | done | docs/02-harnesses.md path table cites Cursor, Claude, Codex, OpenCode, Copilot URLs with checked date; plan.md Architecture matches BP-028 and BP-030 | plan.md; docs/02-harnesses.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T09:14:37Z |
 | BP-026 | CLAUDE.md imports @AGENTS.md instead of linking to it | | done | First line of modules/claude/CLAUDE.md is @AGENTS.md; selftest asserts it | modules/claude/CLAUDE.md; tests/selftest.sh; `bash tests/selftest.sh`; log 2026-11-08T09:14:56Z |
 | BP-027 | Always-on .cursor/rules reach Codex, OpenCode, Copilot, and Claude | BP-026 | done | template/AGENTS.md tells agents to read .cursor/rules/*.mdc; CLAUDE.md imports @.cursor/rules/ponytail.mdc; selftest checks both | template/AGENTS.md; modules/claude/CLAUDE.md; tests/selftest.sh; `bash tests/selftest.sh`; log 2026-11-08T09:15:18Z |
@@ -80,10 +81,15 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 | 2. Rust CLI on PyPI path | BP-007, BP-008, BP-009, BP-010, DOC-013, QA-003 |
 | 3. First PyPI release | BP-011, DOC-014 |
 | 4. Multi-harness adapters | DOC-017, DOC-018, BP-019, BP-020, BP-021, BP-022, BP-023, BP-024, BP-025 |
+| 5. Hub-only + review harden | DOC-019, BP-026, BP-027, BP-028, BP-029, BP-030, BP-031, BP-032, BP-033, QA-006, QA-007, QA-008, BP-034 |
 
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-08T09:29:33Z — Started patch release v0.1.3 (BP-034)
+
+- Bumped Cargo.toml / Cargo.lock to 0.1.3. Docs cite BP-034. Tag and Trusted Publishing next.
 
 ### 2026-11-08T09:25:27Z — Harness smoke recorded (QA-008)
 

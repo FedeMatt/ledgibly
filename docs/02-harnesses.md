@@ -49,7 +49,7 @@ Sources (2026-11-08): [Cursor skills](https://cursor.com/docs/skills); [Claude C
 
 ## Smoke check
 
-Selftest asserts files and paths. It does not start Cursor, Claude Code, Codex, OpenCode, or Copilot. Live results live in the ledger Environment evidence `### QA-008` (QA-008). After `uv tool install ledgibly==0.1.2` (BP-025) or install from this repo, run `ledgibly install-skills` (add `--claude` for Claude Code) and `ledgibly init /path/to/repo --with claude,copilot`, then:
+Selftest asserts files and paths. It does not start Cursor, Claude Code, Codex, OpenCode, or Copilot. Live results live in the ledger Environment evidence `### QA-008` (QA-008). After `uv tool install ledgibly==0.1.3` (BP-034; earlier adapter ship BP-025) or install from this repo, run `ledgibly install-skills` (add `--claude` for Claude Code) and `ledgibly init /path/to/repo --with claude,copilot`, then:
 
 - **Cursor** (BP-020): skills show under user skills; `AGENTS.md` Agent profile loads; `.cursor/rules/ponytail.mdc` is present.
 - **Claude Code** (BP-019, BP-021, BP-026): `~/.claude/skills/keep-implementation-ledger/SKILL.md` exists after `install-skills --claude`; `CLAUDE.md` starts with `@AGENTS.md`; project `.claude/skills` follows `.agents/skills`.
