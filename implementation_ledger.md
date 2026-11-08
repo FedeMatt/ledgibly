@@ -6,6 +6,15 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
+| DOC-016 | README logo uses absolute GitHub raw URL so PyPI renders it | DOC-015 | in_progress | PyPI project page shows brand/ledgibly.png after next release | README absolute raw URL; awaiting BP-018 |
+| BP-018 | Patch release v0.1.1 so PyPI picks up the logo README | DOC-016 | in_progress | pypi.org/project/ledgibly/0.1.1 shows the logo | Cargo.toml 0.1.1 |
+| DOC-017 | Docs: harness-agnostic core vs adapters for Cursor OpenCode Codex Claude Copilot | | done | docs/ names hub paths and what each tool still needs | docs/02-harnesses.md; plan.md; docs/README.md; log 2026-11-08T08:17:44Z |
+| BP-019 | install-skills also installs to ~/.claude/skills from hub | DOC-017 | pending | Fake-HOME selftest has the three skills under .claude/skills | |
+| BP-020 | Cursor adapter stays default init (.cursor/rules, skills symlink) | DOC-017 | pending | Bare init still Cursor-shaped; documented as adapter | |
+| BP-021 | Claude Code adapter: CLAUDE.md pointer and .claude/skills | DOC-017, BP-019 | pending | --with claude lands those files; no overwrite | |
+| BP-022 | OpenCode adapter: hub enough or optional .opencode/skills overlay | DOC-017 | pending | Docs + optional overlay; selftest if we ship files | |
+| BP-023 | Codex adapter: document AGENTS.md hub; ~/.codex not required | DOC-017 | pending | Docs only unless a gap appears | |
+| BP-024 | Copilot adapter: .github/copilot-instructions.md and/or .github/skills | DOC-017 | pending | --with copilot overlay; AGENTS.md still the profile | |
 | DOC-015 | Restore short README opener and refresh PyPI badge URL | DOC-014 | done | Tagline and ledger+legible opener restored; badge uses logo=pypi; Start here still uv tool install | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:08:25Z |
 | BP-011 | First PyPI release: Trusted Publishing + tag v0.1.0 | QA-003 | done | `uv tool install ledgibly` installs 0.1.0; pypi.org/project/ledgibly/0.1.0 exists | tag v0.1.0; Release run 42461088507; `uv tool install ledgibly`; `ledgibly --version`; log 2026-11-08T08:03:03Z |
 | DOC-014 | README PyPI version badge after the package is live | BP-011 | done | README shows a PyPI badge; Start here still `uv tool install ledgibly` | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:03:03Z |
@@ -48,10 +57,15 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 | 1. Kit in the repo | BP-001, DOC-001, QA-001, BP-002 |
 | 2. Rust CLI on PyPI path | BP-007, BP-008, BP-009, BP-010, DOC-013, QA-003 |
 | 3. First PyPI release | BP-011, DOC-014 |
+| 4. Multi-harness adapters | DOC-017, BP-019, BP-020, BP-021, BP-022, BP-023, BP-024 |
 
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-08T08:17:44Z — Harness-agnostic core vs adapters documented (DOC-017)
+
+- `docs/02-harnesses.md`: hub paths, Cursor/OpenCode/Codex/Claude/Copilot table, Claude as extra skill home. `plan.md` admits other harnesses; Cursor remains default adapter. BP-019–BP-024 left pending.
 
 ### 2026-11-08T08:08:25Z — CI asserts sdist includes ponytail.mdc (QA-005)
 

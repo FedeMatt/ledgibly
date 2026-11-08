@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="brand/ledgibly.png" alt="Ledgibly" width="160" />
+  <img src="https://raw.githubusercontent.com/FedeMatt/ledgibly/main/brand/ledgibly.png" alt="Ledgibly" width="160" />
 </p>
 
 <p align="center">

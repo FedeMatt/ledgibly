@@ -5,3 +5,4 @@ These pages explain how the kit works. Architecture decisions live in [`plan.md`
 Cite task IDs inline where a chapter describes the behavior they shipped. Do not restate status, and do not keep a `Tasks:` header list.
 
 1. [Framework](01-framework.md)
+2. [Harnesses](02-harnesses.md)
