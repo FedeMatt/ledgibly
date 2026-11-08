@@ -21,10 +21,10 @@ jobs:
           ver="$(cargo metadata --no-deps --format-version 1 | python3 -c 'import json,sys; print(json.load(sys.stdin)["packages"][0]["version"])')"
           test "$tag" = "$ver"
 
+  # Install maturin from PyPI (not GitHub Releases). maturin-action's curl|tar of
+  # github.com/PyO3/maturin/releases is failing with 504 / "gzip: stdin: not in gzip format".
   linux:
     needs: [gate]
-    # Native runners avoid maturin-action's aarch64 cross container, which flakes on
-    # curl|tar of the maturin release (gzip: stdin: not in gzip format → docker exit 2).
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -32,15 +32,22 @@ jobs:
         include:
           - target: x86_64
             os: ubuntu-24.04
+            rust_target: x86_64-unknown-linux-gnu
           - target: aarch64
             os: ubuntu-24.04-arm
+            rust_target: aarch64-unknown-linux-gnu
     steps:
       - uses: actions/checkout@v4
-      - uses: PyO3/maturin-action@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          target: ${{ matrix.target }}
-          manylinux: auto
-          args: --release --out dist --compatibility pypi
+          targets: ${{ matrix.rust_target }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install maturin
+        run: python3 -m pip install "maturin>=1.7,<2.0"
+      - name: Build wheel
+        run: maturin build --release --out dist --target ${{ matrix.rust_target }}
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-linux-${{ matrix.target }}
@@ -52,13 +59,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [aarch64, x86_64]
+        include:
+          - target: aarch64
+            rust_target: aarch64-apple-darwin
+          - target: x86_64
+            rust_target: x86_64-apple-darwin
     steps:
       - uses: actions/checkout@v4
-      - uses: PyO3/maturin-action@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          target: ${{ matrix.target }}
-          args: --release --out dist --compatibility pypi
+          targets: ${{ matrix.rust_target }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install maturin
+        run: python3 -m pip install "maturin>=1.7,<2.0"
+      - name: Build wheel
+        run: maturin build --release --out dist --target ${{ matrix.rust_target }}
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-macos-${{ matrix.target }}
@@ -69,10 +86,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: PyO3/maturin-action@v1
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v5
         with:
-          target: x64
-          args: --release --out dist --compatibility pypi
+          python-version: "3.12"
+      - name: Install maturin
+        run: python -m pip install "maturin>=1.7,<2.0"
+      - name: Build wheel
+        run: maturin build --release --out dist
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-windows-x64
@@ -83,10 +104,14 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - uses: PyO3/maturin-action@v1
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v5
         with:
-          command: sdist
-          args: --out dist
+          python-version: "3.12"
+      - name: Install maturin
+        run: python3 -m pip install "maturin>=1.7,<2.0"
+      - name: Build sdist
+        run: maturin sdist --out dist
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-sdist
