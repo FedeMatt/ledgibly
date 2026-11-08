@@ -6,8 +6,8 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
-| DOC-016 | README logo uses absolute GitHub raw URL so PyPI renders it | DOC-015 | in_progress | PyPI project page shows brand/ledgibly.png after next release | README absolute raw URL; awaiting BP-018 |
-| BP-018 | Patch release v0.1.1 so PyPI picks up the logo README | DOC-016 | in_progress | pypi.org/project/ledgibly/0.1.1 shows the logo | Cargo.toml 0.1.1 |
+| DOC-016 | README logo uses absolute GitHub raw URL so PyPI renders it | DOC-015 | done | PyPI project page shows brand/ledgibly.png after next release | README.md absolute raw URL; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:24:53Z |
+| BP-018 | Patch release v0.1.1 so PyPI picks up the logo README | DOC-016 | done | pypi.org/project/ledgibly/0.1.1 shows the logo | tag v0.1.1; Release 42462566413; pypi 0.1.1 description has raw logo URL; log 2026-11-08T08:24:53Z |
 | DOC-017 | Docs: harness-agnostic core vs adapters for Cursor OpenCode Codex Claude Copilot | | done | docs/ names hub paths and what each tool still needs | docs/02-harnesses.md; plan.md; docs/README.md; log 2026-11-08T08:17:44Z |
 | BP-019 | install-skills also installs to ~/.claude/skills from hub | DOC-017 | pending | Fake-HOME selftest has the three skills under .claude/skills | |
 | BP-020 | Cursor adapter stays default init (.cursor/rules, skills symlink) | DOC-017 | pending | Bare init still Cursor-shaped; documented as adapter | |
@@ -62,6 +62,14 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-08T08:24:53Z — Patch release v0.1.1 on PyPI (BP-018)
+
+- Tag `v0.1.1`; Release 42462566413 published wheels+sdist. PyPI 0.1.1 description has the absolute logo URL. Dirty-lock CI failure (42462411114) fixed in 6ca4831.
+
+### 2026-11-08T08:24:52Z — README logo uses absolute GitHub raw URL (DOC-016)
+
+- Image src → `https://raw.githubusercontent.com/FedeMatt/ledgibly/main/brand/ledgibly.png`. Cited in docs/01-framework.md.
 
 ### 2026-11-08T08:17:44Z — Harness-agnostic core vs adapters documented (DOC-017)
 
