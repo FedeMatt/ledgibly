@@ -6,6 +6,16 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
+| BP-011 | First PyPI release: Trusted Publishing + tag v0.1.0 | QA-003 | in_progress | `uv tool install ledgibly` installs 0.1.0; pypi.org/project/ledgibly/0.1.0 exists | release.yml publish job; pypi 404; cargo package lists ponytail.mdc; maturin wheel has scripts/ledgibly; blocked on pending publisher |
+| DOC-014 | README PyPI version badge after the package is live | BP-011 | pending | README shows a PyPI badge; Start here still `uv tool install ledgibly` | |
+| QA-005 | CI asserts sdist payload includes hidden template files | QA-003 | pending | CI fails if `template/.cursor/rules/ponytail.mdc` is missing from `cargo package --list` | |
+| BP-007 | Scaffold Rust CLI: Cargo.toml, maturin bin wheel, clap, rust-embed | | done | cargo build; Template embeds .cursor/rules/ponytail.mdc and .gitignore; ledgibly --help works | Cargo.toml; pyproject.toml; src/; `cargo test`; log 2026-11-08T07:20:09Z |
+| BP-008 | Port init.sh to ledgibly init with same flags and no-overwrite | BP-007 | done | bash tests/selftest.sh passes against target/debug/ledgibly | src/init.rs; tests/selftest.sh; `bash tests/selftest.sh`; log 2026-11-08T07:20:09Z |
+| BP-009 | Port install-skills as copy-from-embed into ~/.cursor and ~/.agents | BP-007 | done | Fake-HOME selftest installs three skills with backup | src/skills.rs; tests/selftest.sh; `bash tests/selftest.sh`; log 2026-11-08T07:20:09Z |
+| BP-010 | Retire shell installers; update plan, README, AGENTS verify, skill mention | BP-008, BP-009 | done | init.sh and install-user-skills.sh gone; README leads with uv tool install | plan.md; README.md; AGENTS.md; `bash tests/selftest.sh`; log 2026-11-08T07:20:09Z |
+| DOC-013 | Document Rust CLI install and kit vs target dependency rules | BP-010 | done | docs/01-framework.md describes ledgibly CLI and copied stdlib checker | docs/01-framework.md; README.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T07:20:09Z |
+| QA-003 | CI: cargo test, selftest, maturin wheels on tags; no publish yet | BP-008, BP-009 | done | .github/workflows build on PR and wheels on v* tags | .github/workflows/ci.yml; release.yml; `cargo clippy -- -D warnings`; log 2026-11-08T07:20:09Z |
+| DOC-012 | Fix grammar and typos in the README opener | DOC-011 | done | Opener uses correct grammar; meaning unchanged | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-05T03:12:42Z |
 | DOC-011 | README header: pitch, Docs/Template/Skills/Modules nav, MIT badge | DOC-010 | done | README has centered nav and MIT shield under the logo | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-05T02:56:48Z |
 | DOC-010 | Add brand/ledgibly.png and show it at the top of the README | DOC-009 | done | README shows brand/ledgibly.png above the title; brand/ is tracked | brand/ledgibly.png; README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-05T02:52:25Z |
 | DOC-009 | README motivations: agents track work, tokens, bugs, product-owner role | DOC-008 | done | Motivations say the ledger is how the agent tracks the use case | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-04T14:07:57Z |
@@ -35,10 +45,47 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 | Gate | Tasks |
 |---|---|
 | 1. Kit in the repo | BP-001, DOC-001, QA-001, BP-002 |
+| 2. Rust CLI on PyPI path | BP-007, BP-008, BP-009, BP-010, DOC-013, QA-003 |
+| 3. First PyPI release | BP-011, DOC-014 |
 
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-08T07:48:00Z — Started first PyPI release wiring (BP-011)
+
+- Uncommented Trusted Publishing job in `.github/workflows/release.yml` (`environment: pypi`, `id-token: write`).
+- `https://pypi.org/pypi/ledgibly/json` is 404 (name free).
+- Dry-run: `cargo package --list` includes `template/.cursor/rules/ponytail.mdc`; `maturin build --release --out dist` wrote `ledgibly-0.1.0-py3-none-macosx_10_12_x86_64.whl` with `ledgibly-0.1.0.data/scripts/ledgibly`. Upload waits on pending publisher.
+
+### 2026-11-08T07:20:09Z — CI for Rust CLI and maturin wheels (QA-003)
+
+- `.github/workflows/ci.yml`: fmt, clippy, cargo test, selftest, ledger_check.
+- `.github/workflows/release.yml`: linux/macOS/Windows wheels + sdist on `v*` tags; publish left commented.
+
+### 2026-11-08T07:20:09Z — Docs describe Rust CLI and stdlib target checker (DOC-013)
+
+- `docs/01-framework.md` and README: `uv tool install`, `ledgibly init` / `install-skills`, copied stdlib checker, no target runtime dep on the package.
+
+### 2026-11-08T07:20:09Z — Shell installers retired; kit docs updated (BP-010)
+
+- Removed `init.sh` and `install-user-skills.sh`. Updated `plan.md`, `README.md`, `AGENTS.md`, skill mention of `ledgibly init`.
+
+### 2026-11-08T07:20:09Z — install-skills copies from embed (BP-009)
+
+- `src/skills.rs` copies three skills into `~/.cursor/skills` and `~/.agents/skills` with backup. Selftest uses fake HOME.
+
+### 2026-11-08T07:20:09Z — ledgibly init matches former init.sh (BP-008)
+
+- `src/init.rs`: template + modules, no-overwrite, placeholders, fragments, ART prepend, `.cursor/skills` symlink. `bash tests/selftest.sh` ok.
+
+### 2026-11-08T07:20:09Z — Rust CLI scaffold with maturin bin + rust-embed (BP-007)
+
+- `Cargo.toml`, `pyproject.toml` (`bindings = "bin"`), `src/{main,embed,init,skills}.rs`. Embed includes `.cursor/rules/ponytail.mdc` and `.gitignore`. `cargo test` 9 passed.
+
+### 2026-11-05T03:12:42Z — README opener grammar and typos fixed (DOC-012)
+
+- README.md opener: widespread, arisen, lost, these problems, a harness, the name comes from. Meaning unchanged.
 
 ### 2026-11-05T02:56:48Z — README header has nav and MIT badge (DOC-011)
 

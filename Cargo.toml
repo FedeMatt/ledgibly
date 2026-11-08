@@ -1,0 +1,40 @@
+[package]
+name = "ledgibly"
+version = "0.1.0"
+edition = "2021"
+description = "Reusable implementation-ledger framework for Cursor-driven repos"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/FedeMatt/ledgibly"
+homepage = "https://github.com/FedeMatt/ledgibly"
+keywords = ["ledger", "cursor", "agents", "cli"]
+categories = ["command-line-utilities", "development-tools"]
+include = [
+  "src/**",
+  "template/**",
+  "modules/**",
+  "skills/**",
+  "Cargo.toml",
+  "Cargo.lock",
+  "pyproject.toml",
+  "README.md",
+  "LICENSE",
+]
+
+[[bin]]
+name = "ledgibly"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+rust-embed = { version = "8", features = [
+  "interpolate-folder-path",
+  "debug-embed",
+  "include-exclude",
+] }
+time = { version = "0.3", default-features = false, features = ["formatting", "macros"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

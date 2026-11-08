@@ -5,7 +5,7 @@ description: Keep a repo's plan, implementation ledger (task table + UTC log), d
 
 # Keep the implementation ledger
 
-Per-repo facts (paths, ID prefixes, verify commands, vocabulary, docs map, picking rules) live in the `## Agent profile` section of the repo's AGENTS.md. Read it first. If there is no profile or no ledger, bootstrap both from [reference.md](reference.md) before writing code. Prefer the repo's `init.sh` from Ledgibly when that kit is available.
+Per-repo facts (paths, ID prefixes, verify commands, vocabulary, docs map, picking rules) live in the `## Agent profile` section of the repo's AGENTS.md. Read it first. If there is no profile or no ledger, bootstrap both from [reference.md](reference.md) before writing code. Prefer `ledgibly init` from the Ledgibly kit when that tool is available.
 
 ## Document roles
 

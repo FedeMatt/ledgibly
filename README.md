@@ -3,10 +3,6 @@
 </p>
 
 <p align="center">
-  <em>A ledger kit for Cursor agents.</em>
-</p>
-
-<p align="center">
   <a href="docs/README.md">Docs</a>
   ·
   <a href="template/">Template</a>
@@ -22,7 +18,11 @@
 
 # Ledgibly
 
-**Ledgibly** aims to keep coding agents more reliable and makes them a better partner to tackle complex projects. The name comes from ledger + legible: one task table (`implementation_ledger.md`) is the only place status is asserted, with evidence and a newest-first UTC log. `plan.md` is the scope. `docs/` is how the system works. The README is install and run. Per-repo facts live in one `AGENTS.md` section so the skills stay generic. At the moment the kit is specialized for Cursor.
+With the widespread adoption of coding assistants, developers are spending less time reviewing code and more time ideating and creating new and better programs.
+
+This has completely changed the way of coding, and new problems have arisen: programmers have very low visibility on the code details, agents perform extensive code reviews by consuming tokens before working on a new request; when a conversation chat is closed and a new one opened, the previous context is lost and everything starts from zero; developers have to keep in mind architectural decisions, backlog, and current status. Skills and memory layers partially solve these problems, but still don't make coding agents a reliable partner to tackle complex projects.
+
+**Ledgibly** tries to solve it by adding a layer between developers and an agent harness. The setup is very simple, as the name suggests, it makes a repository legible by using a ledger: one task table (`implementation_ledger.md`) is the only place status is asserted, with evidence and a newest-first UTC log. `plan.md` is the scope. `docs/` tracks how the system works. The README is install and run. Per-repo facts live in one `AGENTS.md` section so the skills stay generic. At the moment the kit is specialized for Cursor.
 
 # So, what can I do with this software?
 
@@ -46,25 +46,35 @@ This is a working template for the main case: Cursor, one ledger, a few skills. 
 ## Start here
 
 ```sh
-git clone https://github.com/FedeMatt/ledgibly.git
-cd ledgibly
-./install-user-skills.sh
-# ./install-user-skills.sh --copy    # if Cursor ignores symlinks
+uv tool install ledgibly
+# pipx install ledgibly
+ledgibly install-skills
 ```
 
-Then copy the kit into a new repo:
+After a kit upgrade, re-run `ledgibly install-skills` so copied skills pick up changes.
+
+Then bootstrap a new repo:
 
 ```sh
-./init.sh /path/to/new-repo \
+ledgibly init /path/to/new-repo \
   --name MyApp \
   --prefixes "ART FE BE DOC QA" \
   --verify "cd frontend && npm test" \
   --with figma,source-docs,python-uv,formatter,database-design,rtk
 ```
 
-`--with` is optional. `init.sh` refuses to overwrite existing files. It copies `template/`, overlays modules, and replaces `{{PROJECT}}` / `{{PREFIXES}}` / `{{VERIFY}}` / `{{DATE}}` only in those copied files. It creates `.cursor/skills -> ../.agents/skills`, and prints remaining `<fill me>` lines. Seed rows use `ART-`; if `--prefixes` omits `ART`, init prepends it.
+`--with` is optional. `ledgibly init` refuses to overwrite existing files. It copies `template/`, overlays modules, and replaces `{{PROJECT}}` / `{{PREFIXES}}` / `{{VERIFY}}` / `{{DATE}}` only in those copied files. It creates `.cursor/skills -> ../.agents/skills`, and prints remaining `<fill me>` lines. Seed rows use `ART-`; if `--prefixes` omits `ART`, init prepends it. The target gets a copied stdlib `scripts/ledger_check.py` and does not depend on the `ledgibly` package at runtime.
 
 Fill the Agent profile (docs map, pre-checks, Review trace), then start from the first `pending` row.
+
+### From source (kit development)
+
+```sh
+git clone https://github.com/FedeMatt/ledgibly.git
+cd ledgibly
+cargo run -- install-skills
+cargo run -- init /path/to/new-repo --name MyApp
+```
 
 ## Document roles
 
@@ -114,6 +124,7 @@ python3 scripts/ledger_check.py
 ## Development of this kit
 
 ```sh
+cargo test
 bash tests/selftest.sh
 python3 template/scripts/ledger_check.py
 ```

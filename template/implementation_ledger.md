@@ -26,6 +26,6 @@ Newest first. Older entries: [archive](implementation_ledger_archive.md).
 
 ### {{DATE}} — Operational ledger bootstrapped (ART-002)
 
-- Seeded ART-001 and ART-002 from Ledgibly `init.sh`.
+- Seeded ART-001 and ART-002 from Ledgibly `ledgibly init`.
 - Checker: `python3 scripts/ledger_check.py`.
 - Next: fill `<fill me>` lines in `AGENTS.md` and `plan.md`, then add product rows.

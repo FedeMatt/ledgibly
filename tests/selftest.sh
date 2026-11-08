@@ -1,19 +1,22 @@
 #!/usr/bin/env bash
-# One runnable check: init.sh + ledger_check.py. No frameworks.
+# One runnable check: ledgibly init + install-skills + ledger_check.py. No frameworks.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TMP="$(mktemp -d "${TMPDIR:-/tmp}/ledgibly.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
-if "$ROOT/init.sh" "$TMP/noval" --name 2>"$TMP/noval.err"; then
+cargo build --quiet --manifest-path "$ROOT/Cargo.toml"
+LEDGIBLY="$ROOT/target/debug/ledgibly"
+
+if "$LEDGIBLY" init "$TMP/noval" --name 2>"$TMP/noval.err"; then
   echo "selftest: --name without a value should fail" >&2
   exit 1
 fi
 grep -q 'needs a value' "$TMP/noval.err"
 
 APP="$TMP/app"
-"$ROOT/init.sh" "$APP" \
+"$LEDGIBLY" init "$APP" \
   --name DemoApp \
   --prefixes "ART FE BE DOC QA" \
   --verify "python3 scripts/ledger_check.py" \
@@ -27,6 +30,8 @@ fi
 
 test -L "$APP/.cursor/skills"
 test "$(readlink "$APP/.cursor/skills")" = "../.agents/skills"
+test -f "$APP/.cursor/rules/ponytail.mdc"
+test -f "$APP/.gitignore"
 test -f "$APP/docs/ui/screens.md"
 test -f "$APP/docs/sources/README.md"
 test -f "$APP/.agents/skills/source-docs/SKILL.md"
@@ -46,7 +51,7 @@ grep -q 'Use when' "$APP/.agents/skills/database-design/SKILL.md"
 python3 "$APP/scripts/ledger_check.py" --root "$APP"
 
 BARE="$TMP/bare"
-"$ROOT/init.sh" "$BARE" --name BareApp
+"$LEDGIBLY" init "$BARE" --name BareApp
 test ! -e "$BARE/docs/ui"
 test ! -f "$BARE/.agents/skills/source-docs/SKILL.md"
 test ! -f "$BARE/.cursor/rules/rtk.mdc"
@@ -56,21 +61,39 @@ EXIST="$TMP/existing"
 mkdir -p "$EXIST/src"
 printf '{{PROJECT}}\r\n' > "$EXIST/src/t.hbs"
 cp "$EXIST/src/t.hbs" "$TMP/t.hbs.orig"
-"$ROOT/init.sh" "$EXIST" --name ExistingApp
+"$LEDGIBLY" init "$EXIST" --name ExistingApp
 cmp "$EXIST/src/t.hbs" "$TMP/t.hbs.orig"
 
 PFX="$TMP/pfx"
-"$ROOT/init.sh" "$PFX" --prefixes "FE BE"
+"$LEDGIBLY" init "$PFX" --prefixes "FE BE"
 grep -q 'ID prefixes: ART FE BE' "$PFX/AGENTS.md"
 
 RTK="$TMP/rtkonly"
-"$ROOT/init.sh" "$RTK" --name RtkApp --with rtk
+"$LEDGIBLY" init "$RTK" --name RtkApp --with rtk
 test -f "$RTK/.cursor/rules/rtk.mdc"
 
-if "$ROOT/init.sh" "$APP" --name DemoApp --prefixes "ART DOC QA" --verify "true"; then
+if "$LEDGIBLY" init "$APP" --name DemoApp --prefixes "ART DOC QA" --verify "true"; then
   echo "selftest: re-init should have refused to overwrite" >&2
   exit 1
 fi
+
+FAKE_HOME="$TMP/home"
+mkdir -p "$FAKE_HOME"
+HOME="$FAKE_HOME" "$LEDGIBLY" install-skills
+test -f "$FAKE_HOME/.cursor/skills/keep-implementation-ledger/SKILL.md"
+test -f "$FAKE_HOME/.cursor/skills/code-review/SKILL.md"
+test -f "$FAKE_HOME/.cursor/skills/figma-ui/SKILL.md"
+test -f "$FAKE_HOME/.agents/skills/keep-implementation-ledger/reference.md"
+# Second run with matching contents should skip
+HOME="$FAKE_HOME" "$LEDGIBLY" install-skills >"$TMP/skills2.out"
+grep -q 'already installed' "$TMP/skills2.out"
+# Force replaces with backup
+echo dirty >"$FAKE_HOME/.cursor/skills/code-review/SKILL.md"
+HOME="$FAKE_HOME" "$LEDGIBLY" install-skills --force >"$TMP/skills3.out"
+grep -q 'backed up' "$TMP/skills3.out"
+grep -q 'Keep the implementation ledger\|code-review\|Review repository' "$FAKE_HOME/.cursor/skills/code-review/SKILL.md" \
+  || grep -q 'name: code-review' "$FAKE_HOME/.cursor/skills/code-review/SKILL.md"
+test -d "$(echo "$FAKE_HOME"/.cursor/skills/.backup-*)"
 
 replace_art002() {
   local ledger="$1"
