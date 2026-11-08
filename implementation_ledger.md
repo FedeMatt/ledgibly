@@ -6,7 +6,7 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
-| BP-025 | Patch release v0.1.2 so PyPI ships adapters and README | BP-024, DOC-018 | in_progress | pypi.org/project/ledgibly/0.1.2 exists | Cargo.toml 0.1.2 |
+| BP-025 | Patch release v0.1.2 so PyPI ships adapters and README | BP-024, DOC-018 | done | pypi.org/project/ledgibly/0.1.2 exists | tag v0.1.2; Release 42464038529; pypi 0.1.2 description has coding-agents tagline; log 2026-11-08T08:45:59Z |
 | DOC-018 | README, CLI about, and package description: Cursor is default adapter not Cursor-only | DOC-017 | done | README and Cargo/PyPI description admit other harnesses; Cursor remains default | README.md; Cargo.toml; pyproject.toml; src/main.rs; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:37:29Z |
 | DOC-016 | README logo uses absolute GitHub raw URL so PyPI renders it | DOC-015 | done | PyPI project page shows brand/ledgibly.png after next release | README.md absolute raw URL; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:24:53Z |
 | BP-018 | Patch release v0.1.1 so PyPI picks up the logo README | DOC-016 | done | pypi.org/project/ledgibly/0.1.1 shows the logo | tag v0.1.1; Release 42462566413; pypi 0.1.1 description has raw logo URL; log 2026-11-08T08:24:53Z |
@@ -64,6 +64,10 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-08T08:45:59Z — Patch release v0.1.2 on PyPI (BP-025)
+
+- Tag `v0.1.2`; Release 42464038529. PyPI 0.1.2 description has the coding-agents tagline and harness README. Smoke check in docs/02-harnesses.md.
 
 ### 2026-11-08T08:37:29Z — README no longer Cursor-only (DOC-018)
 
