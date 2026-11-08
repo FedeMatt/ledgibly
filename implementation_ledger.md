@@ -6,6 +6,7 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
+| BP-035 | Cache-bust the PyPI shields badge so GitHub Camo shows the current version | BP-034 | done | GitHub README PyPI badge URL ends in .svg and Shields reports the published version | README.md img.shields.io/pypi/v/ledgibly.svg; curl shields SVG v0.1.3; log 2026-11-08T10:01:00Z |
 | BP-034 | Patch release v0.1.3 so PyPI ships hub-only adapters and review fixes | BP-030, BP-033, QA-007 | done | pypi.org/project/ledgibly/0.1.3 exists | tag v0.1.3; Release 42469027727; .github/workflows/release.yml; log 2026-11-08T09:55:57Z |
 | DOC-019 | Harness docs cite vendor URLs; plan.md records hub-only skills and no .cursor/skills link | | done | docs/02-harnesses.md path table cites Cursor, Claude, Codex, OpenCode, Copilot URLs with checked date; plan.md Architecture matches BP-028 and BP-030 | plan.md; docs/02-harnesses.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T09:14:37Z |
 | BP-026 | CLAUDE.md imports @AGENTS.md instead of linking to it | | done | First line of modules/claude/CLAUDE.md is @AGENTS.md; selftest asserts it | modules/claude/CLAUDE.md; tests/selftest.sh; `bash tests/selftest.sh`; log 2026-11-08T09:14:56Z |
@@ -84,6 +85,10 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 | 5. Hub-only + review harden | DOC-019, BP-026, BP-027, BP-028, BP-029, BP-030, BP-031, BP-032, BP-033, QA-006, QA-007, QA-008, BP-034 |
 
 ## Chronological UTC Log
+
+### 2026-11-08T10:01:00Z — Cache-bust PyPI badge for GitHub README (BP-035)
+
+- GitHub Camo was serving a cached Shields SVG for 0.1.2. Badge src is now img.shields.io/pypi/v/ledgibly.svg so Camo fetches a new asset. PyPI and Shields already report 0.1.3.
 
 ### 2026-11-08T09:55:57Z — Published patch release v0.1.3 (BP-034)
 

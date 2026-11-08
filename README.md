@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <a href="https://pypi.org/project/ledgibly/"><img src="https://img.shields.io/pypi/v/ledgibly?logo=pypi" alt="PyPI version" /></a>
+  <a href="https://pypi.org/project/ledgibly/"><img src="https://img.shields.io/pypi/v/ledgibly.svg?logo=pypi" alt="PyPI version" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" /></a>
 </p>
 
