@@ -16,7 +16,7 @@ Per-repo facts (paths, ID prefixes, verify commands, vocabulary, docs map, picki
 
 ## Plan to rows
 
-When the user approves a plan (Cursor plan todos, or a scope change in `plan.md`), add a `pending` row for each todo **before writing code**:
+When the user approves a plan (harness plan todos, or a scope change in `plan.md`), add a `pending` row for each todo **before writing code**:
 
 1. Next free ID for the matching prefix (recipe in [reference.md](reference.md)).
 2. Dependencies follow the plan order.

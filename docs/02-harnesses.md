@@ -41,7 +41,7 @@ Sources (2026-11-08): [Cursor skills](https://cursor.com/docs/skills); [Claude C
 ## Design rules
 
 1. **One SKILL.md source.** Adapters may symlink or copy into a second directory; they must not diverge content.
-2. **AGENTS.md stays the profile.** Per-repo facts stay in `## Agent profile`. Skills stay generic.
+2. **AGENTS.md stays the profile.** Per-repo facts stay in `## Agent profile`. Skills stay generic (BP-031: harness plan todos; figma-design-to-code only if the harness has it).
 3. **Claude is the only second home, and it is opt-in.** Claude does not read the hub, so `install-skills --claude` copies `~/.claude/skills` and `--with claude` links `.claude/skills` (BP-019, BP-021, DOC-019). Cursor, OpenCode, and Copilot also scan `.claude` / `~/.claude`, so a Claude extra home can surface each skill twice. For OpenCode, set `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1` when using `--with claude`.
 4. **OpenCode and Codex already meet the hub.** Document that; do not ship duplicate trees (BP-022, BP-023).
 5. **Copilot** already reads the hub for skills. `--with copilot` only adds `.github/copilot-instructions.md` pointing at the same document roles (BP-024).
@@ -49,7 +49,7 @@ Sources (2026-11-08): [Cursor skills](https://cursor.com/docs/skills); [Claude C
 
 ## Smoke check
 
-Selftest asserts files and paths. It does not start Cursor, Claude Code, Codex, OpenCode, or Copilot. After `uv tool install ledgibly==0.1.2` (BP-025) or install from this repo, run `ledgibly install-skills` (add `--claude` for Claude Code) and `ledgibly init /path/to/repo --with claude,copilot`, then:
+Selftest asserts files and paths. It does not start Cursor, Claude Code, Codex, OpenCode, or Copilot. Live results live in the ledger Environment evidence `### QA-008` (QA-008). After `uv tool install ledgibly==0.1.2` (BP-025) or install from this repo, run `ledgibly install-skills` (add `--claude` for Claude Code) and `ledgibly init /path/to/repo --with claude,copilot`, then:
 
 - **Cursor** (BP-020): skills show under user skills; `AGENTS.md` Agent profile loads; `.cursor/rules/ponytail.mdc` is present.
 - **Claude Code** (BP-019, BP-021, BP-026): `~/.claude/skills/keep-implementation-ledger/SKILL.md` exists after `install-skills --claude`; `CLAUDE.md` starts with `@AGENTS.md`; project `.claude/skills` follows `.agents/skills`.

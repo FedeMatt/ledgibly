@@ -13,7 +13,7 @@ STATUSES = frozenset({"pending", "in_progress", "blocked", "done", "superseded"}
 ID_RE = re.compile(r"^[A-Z][A-Z0-9]*-\d+$")
 ID_IN_TEXT_RE = re.compile(r"\b[A-Z][A-Z0-9]*-\d+\b")
 LOG_HEADING_RE = re.compile(
-    r"^### (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z) — .+ \(([A-Z][A-Z0-9]*-\d+)\)\s*$"
+    r"^### (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z) — .+ \(([A-Z][A-Z0-9]*-\d+(?:, [A-Z][A-Z0-9]*-\d+)*)\)\s*$"
 )
 BUDGETS = {"Description": 120, "Acceptance condition": 200, "Evidence": 300}
 EMPTY = frozenset({"", "-", "—", "–"})
@@ -130,6 +130,12 @@ def check_rows(
                     errors.append(f"{task_id}: bad dependency {dep!r}")
                 elif dep not in by_id:
                     errors.append(f"{task_id}: dependency {dep} is not in the table")
+                elif cells[col["Status"]] == "done":
+                    dep_status = by_id[dep][col["Status"]]
+                    if dep_status not in {"done", "superseded"}:
+                        warnings.append(
+                            f"{task_id}: done depends on {dep} ({dep_status})"
+                        )
         if cells[col["Status"]] == "superseded":
             named = " ".join(c for i, c in enumerate(cells) if i not in skip_ids)
             for other in ID_IN_TEXT_RE.findall(named):
@@ -155,14 +161,14 @@ def check_log(text: str, by_id: dict[str, list[str]]) -> tuple[list[str], list[s
             warnings.append(f"log heading not in expected format: {raw[:80]}")
             continue
         stamp = datetime.strptime(match.group(1), "%Y-%m-%dT%H:%M:%SZ")
-        task_id = match.group(2)
         if seen and stamp > seen[-1]:
             errors.append(
                 f"log not newest-first: {match.group(1)} follows {seen[-1].strftime('%Y-%m-%dT%H:%M:%SZ')}"
             )
         seen.append(stamp)
-        if task_id not in by_id:
-            warnings.append(f"log cites {task_id} which is not in the Tasks table")
+        for task_id in match.group(2).split(", "):
+            if task_id not in by_id:
+                warnings.append(f"log cites {task_id} which is not in the Tasks table")
     return errors, warnings
 
 

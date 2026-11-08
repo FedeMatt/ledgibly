@@ -28,7 +28,7 @@
 # So, what can I do with this software?
 
 * Start a new repo that already has a plan, a ledger, docs, an agent profile, and a checker.
-* Give work a stable ID **before** anyone writes code. Plan todos (including Cursor plans) become rows first.
+* Give work a stable ID **before** anyone writes code. Plan todos (including harness plan files) become rows first.
 * Require evidence for `done`: paths plus commands that passed. Status is not restated in docs or the README.
 * Install the same three skills (`keep-implementation-ledger`, `code-review`, `figma-ui`) into every machine you use for this work.
 

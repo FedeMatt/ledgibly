@@ -12,12 +12,12 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 | BP-028 | install-skills writes only ~/.agents/skills; --claude adds ~/.claude/skills | DOC-019 | done | Fake-HOME selftest: no ~/.cursor/skills; --claude writes ~/.claude/skills; leftover ~/.cursor kit skill backed up; README Start here and main.rs help match | src/skills.rs; src/main.rs; README.md; tests/selftest.sh; `cargo test`; `bash tests/selftest.sh`; log 2026-11-08T09:16:16Z |
 | BP-029 | install-skills writes backups outside folders tools scan | BP-028 | done | Backups land in ~/.ledgibly/backups/<ts>/; selftest finds no .backup-* under any skill folder | src/skills.rs; tests/selftest.sh; AGENTS.md; `cargo test`; `bash tests/selftest.sh`; log 2026-11-08T09:16:50Z |
 | BP-030 | Bare init stops creating the .cursor/skills symlink | DOC-019 | done | Bare selftest has no .cursor/skills; --with claude still links .claude/skills; conflict check, template/AGENTS.md, README What a new repo gets match | src/init.rs; template/AGENTS.md; README.md; tests/selftest.sh; `cargo test`; `bash tests/selftest.sh`; log 2026-11-08T09:17:29Z |
-| BP-031 | Skills and template/AGENTS.md use wording that fits any harness | BP-030 | pending | keep-implementation-ledger says harness plan todos; figma-ui loads figma-design-to-code only if the harness provides it | |
-| BP-032 | ledger_check warns when a done row depends on a row that is not done | | pending | Selftest fixture prints the warning; this ledger still has 0 errors | |
-| BP-033 | ledger_check accepts (A-1, A-2) in a log heading | | pending | Each ID in the heading is checked against the table; selftest covers it; reference.md shows the form | |
-| QA-006 | CI runs cargo test --locked on Linux, macOS, Windows; selftest on Linux and macOS | BP-030 | pending | Windows job runs init --with claude and confirms CLAUDE.md and .claude/skills exist | |
-| QA-007 | Release fails early when the tag does not match the Cargo.toml version | | pending | release.yml step compares GITHUB_REF_NAME with cargo metadata version before any wheel job runs | |
-| QA-008 | Manual smoke: each harness loads the profile and shared skills after a fresh init | BP-026, BP-027, BP-028, BP-030 | pending | Environment evidence has a ### QA-008 entry per harness with observed load (or blocked if not installed) | |
+| BP-031 | Skills and template/AGENTS.md use wording that fits any harness | BP-030 | done | keep-implementation-ledger says harness plan todos; figma-ui loads figma-design-to-code only if the harness provides it | skills/keep-implementation-ledger/SKILL.md; skills/figma-ui/SKILL.md; README.md; `bash tests/selftest.sh`; log 2026-11-08T09:23:17Z |
+| BP-032 | ledger_check warns when a done row depends on a row that is not done | | done | Selftest fixture prints the warning; this ledger still has 0 errors | template/scripts/ledger_check.py; tests/selftest.sh; docs/01-framework.md; `bash tests/selftest.sh`; `python3 template/scripts/ledger_check.py`; log 2026-11-08T09:23:56Z |
+| BP-033 | ledger_check accepts (A-1, A-2) in a log heading | | done | Each ID in the heading is checked against the table; selftest covers it; reference.md shows the form | template/scripts/ledger_check.py; skills/keep-implementation-ledger/reference.md; tests/selftest.sh; `bash tests/selftest.sh`; log 2026-11-08T09:24:32Z |
+| QA-006 | CI runs cargo test --locked on Linux, macOS, Windows; selftest on Linux and macOS | BP-030 | done | Windows job runs init --with claude and confirms CLAUDE.md and .claude/skills exist | .github/workflows/ci.yml linux/macos/windows; `cargo test --locked`; docs/01-framework.md; log 2026-11-08T09:24:51Z |
+| QA-007 | Release fails early when the tag does not match the Cargo.toml version | | done | release.yml step compares GITHUB_REF_NAME with cargo metadata version before any wheel job runs | .github/workflows/release.yml gate job; `cargo metadata` version 0.1.2; docs/01-framework.md; log 2026-11-08T09:25:11Z |
+| QA-008 | Manual smoke: each harness loads the profile and shared skills after a fresh init | BP-026, BP-027, BP-028, BP-030 | done | Environment evidence has a ### QA-008 entry per harness with observed load (or blocked if not installed) | Environment evidence ### QA-008; /tmp/ledgibly-qa008 init; Cursor observed; Claude Codex OpenCode Copilot blocked not installed; log 2026-11-08T09:25:27Z |
 | BP-025 | Patch release v0.1.2 so PyPI ships adapters and README | BP-024, DOC-018 | done | pypi.org/project/ledgibly/0.1.2 exists | tag v0.1.2; Release 42464038529; pypi 0.1.2 description has coding-agents tagline; log 2026-11-08T08:45:59Z |
 | DOC-018 | README, CLI about, and package description: Cursor is default adapter not Cursor-only | DOC-017 | done | README and Cargo/PyPI description admit other harnesses; Cursor remains default | README.md; Cargo.toml; pyproject.toml; src/main.rs; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:37:29Z |
 | DOC-016 | README logo uses absolute GitHub raw URL so PyPI renders it | DOC-015 | done | PyPI project page shows brand/ledgibly.png after next release | README.md absolute raw URL; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:24:53Z |
@@ -64,6 +64,14 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the table cell.
 
+### QA-008
+
+- **Cursor** (this session, 2026-11-08): Agent profile from `AGENTS.md`; user skills from `~/.agents/skills/keep-implementation-ledger/SKILL.md`; after `ledgibly init /tmp/ledgibly-qa008 --with claude,copilot`, `.cursor/rules/ponytail.mdc` is present.
+- **Claude Code**: blocked: `claude` not installed on this machine. Init did write `CLAUDE.md` (`@AGENTS.md`) and `.claude/skills`.
+- **Codex**: blocked: `codex` not installed on this machine.
+- **OpenCode**: blocked: `opencode` not installed on this machine.
+- **GitHub Copilot**: blocked: `copilot` not installed on this machine. Init did write `.github/copilot-instructions.md`.
+
 ## Milestones
 
 | Gate | Tasks |
@@ -76,6 +84,42 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-08T09:25:27Z — Harness smoke recorded (QA-008)
+
+- Init `/tmp/ledgibly-qa008 --with claude,copilot`: ponytail, `@AGENTS.md`, `.claude/skills`, copilot-instructions present.
+- Cursor observed in this session (profile + `~/.agents/skills`). Claude Code, Codex, OpenCode, Copilot CLIs not installed: blocked in Environment evidence.
+- `python3 template/scripts/ledger_check.py`.
+
+### 2026-11-08T09:25:11Z — Release gate matches tag to Cargo.toml (QA-007)
+
+- `release.yml` `gate` job runs before linux/macos/windows/sdist. On `v*` tags, `GITHUB_REF_NAME` (minus `v`) must equal `cargo metadata` version.
+- Local metadata version is 0.1.2, matching Cargo.toml. Dispatch without a tag skips the compare step.
+- `python3 template/scripts/ledger_check.py`.
+
+### 2026-11-08T09:24:51Z — CI matrix: locked tests, Windows claude init (QA-006)
+
+- `.github/workflows/ci.yml`: linux (fmt, clippy, `cargo test --locked`, selftest, ledger_check, sdist), macos (`cargo test --locked`, selftest), windows (`cargo test --locked`, `init --with claude`).
+- Local `cargo test --locked` passed. Windows job not run here.
+- `python3 template/scripts/ledger_check.py`.
+
+### 2026-11-08T09:24:32Z — Log headings may list several IDs (BP-033)
+
+- `LOG_HEADING_RE` accepts `(ART-001, ART-002)`. Each ID is checked against the Tasks table.
+- `reference.md` documents the form. Selftest: valid pair passes; `NOPE-001` warns; 0 errors.
+- `bash tests/selftest.sh`; `python3 template/scripts/ledger_check.py`.
+
+### 2026-11-08T09:23:56Z — Checker warns when done depends on unfinished (BP-032)
+
+- `ledger_check.py` warns `{id}: done depends on {dep} ({status})` unless the dep is `done` or `superseded`.
+- Selftest fixture ART-002 done on ART-003 pending prints the warning and 0 errors. Kit ledger still 0 warnings.
+- `bash tests/selftest.sh`; `python3 template/scripts/ledger_check.py`.
+
+### 2026-11-08T09:23:17Z — Skills use harness-neutral wording (BP-031)
+
+- `keep-implementation-ledger` says harness plan todos. `figma-ui` loads `figma-design-to-code` only if the harness has it.
+- README: plan todos include harness plan files. Fake-HOME selftest greps the copied skill.
+- `bash tests/selftest.sh`; `python3 template/scripts/ledger_check.py`.
 
 ### 2026-11-08T09:17:29Z — Bare init no longer links .cursor/skills (BP-030)
 

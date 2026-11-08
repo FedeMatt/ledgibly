@@ -3,7 +3,7 @@
 ```
 - [ ] Read the Figma block of the AGENTS.md Agent profile
 - [ ] Found the frame by grepping the inventory; used the node ID; skipped hidden frames
-- [ ] Loaded figma-design-to-code, then get_design_context on one node (smallest that covers the change)
+- [ ] Loaded figma-design-to-code if this harness has it (else harness Figma tools); get_design_context on one node (smallest that covers the change)
 - [ ] get_screenshot on the same node for comparison
 - [ ] Reused existing components; adapted to the profile target stack (no web/Tailwind paste)
 - [ ] No invented layout, chrome, or copy; no out-of-scope areas

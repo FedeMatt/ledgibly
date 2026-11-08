@@ -15,7 +15,7 @@ Per-repo Figma facts live in the `Figma` block of the `## Agent profile` section
 
 ## Pull one node at a time
 
-1. Load the `figma-design-to-code` skill (mandatory), then call `get_design_context` with the profile fileKey and the frame, or the smallest child node that covers the change.
+1. If this harness has a `figma-design-to-code` skill, load it, then call `get_design_context` with the profile fileKey and the frame, or the smallest child node that covers the change. If that skill is absent, use the harness's Figma MCP or equivalent tools. If neither exists, stop and ask; do not invent layout.
 2. Use `get_screenshot` on the same node as the visual reference.
 3. Use `get_variable_defs` only if the repo maps Figma variables to tokens.
 4. Never pull a whole page. Pull overlays and components only when the parent screen needs them.

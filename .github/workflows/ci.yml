@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,10 +19,38 @@ jobs:
       - name: cargo clippy
         run: cargo clippy -- -D warnings
       - name: cargo test
-        run: cargo test
+        run: cargo test --locked
       - name: selftest
         run: bash tests/selftest.sh
       - name: ledger_check
         run: python3 template/scripts/ledger_check.py
       - name: sdist payload
         run: cargo package --list | grep -F 'template/.cursor/rules/ponytail.mdc'
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: cargo test
+        run: cargo test --locked
+      - name: selftest
+        run: bash tests/selftest.sh
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: cargo test
+        run: cargo test --locked
+      - name: init --with claude
+        shell: pwsh
+        run: |
+          cargo build --quiet
+          New-Item -ItemType Directory -Force -Path "$env:RUNNER_TEMP/qa006" | Out-Null
+          .\target\debug\ledgibly.exe init "$env:RUNNER_TEMP/qa006" --name WinApp --with claude
+          if (-not (Test-Path "$env:RUNNER_TEMP/qa006/CLAUDE.md")) { exit 1 }
+          if (-not (Test-Path "$env:RUNNER_TEMP/qa006/.claude/skills")) { exit 1 }

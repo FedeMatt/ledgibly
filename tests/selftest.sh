@@ -111,6 +111,7 @@ test -f "$FAKE_HOME/.agents/skills/keep-implementation-ledger/SKILL.md"
 test -f "$FAKE_HOME/.agents/skills/code-review/SKILL.md"
 test -f "$FAKE_HOME/.agents/skills/figma-ui/SKILL.md"
 test -f "$FAKE_HOME/.agents/skills/keep-implementation-ledger/reference.md"
+grep -q 'harness plan todos' "$FAKE_HOME/.agents/skills/keep-implementation-ledger/SKILL.md"
 test ! -e "$FAKE_HOME/.cursor/skills"
 test ! -e "$FAKE_HOME/.claude/skills"
 HOME="$FAKE_HOME" "$LEDGIBLY" install-skills --claude
@@ -245,5 +246,70 @@ fail_case columns
 fail_case no-evidence
 fail_case superseded-dep
 fail_case log-order
+
+DEPWARN="$TMP/depwarn"
+cp -R "$BARE" "$DEPWARN"
+python3 - "$DEPWARN/implementation_ledger.md" <<'PY'
+from pathlib import Path
+import sys
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+old = "| ART-002 | Operational implementation ledger | ART-001 |"
+if old not in text:
+    raise SystemExit("selftest: ART-002 row not found")
+text = text.replace(
+    old,
+    "| ART-003 | leftover work | | pending | still open | |\n"
+    "| ART-002 | Operational implementation ledger | ART-003 |",
+    1,
+)
+path.write_text(text, encoding="utf-8")
+PY
+python3 "$DEPWARN/scripts/ledger_check.py" --root "$DEPWARN" >"$TMP/dep.warn" 2>&1 || true
+grep -q 'warning: ART-002: done depends on ART-003' "$TMP/dep.warn"
+grep -q '^0 errors' "$TMP/dep.warn"
+
+TWOK="$TMP/twoids"
+cp -R "$BARE" "$TWOK"
+python3 - "$TWOK/implementation_ledger.md" <<'PY'
+from pathlib import Path
+import re
+import sys
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+m = re.search(r"^### (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z) —", text, re.M)
+if not m:
+    raise SystemExit("selftest: log heading not found")
+stamp = m.group(1)
+marker = "## Chronological UTC Log"
+idx = text.find(marker)
+nl = text.find("\n", idx)
+extra = f"\n\n### {stamp} — two ids (ART-001, ART-002)\n"
+path.write_text(text[: nl + 1] + extra + text[nl + 1 :], encoding="utf-8")
+PY
+python3 "$TWOK/scripts/ledger_check.py" --root "$TWOK" >"$TMP/two.out" 2>&1
+grep -q '^0 errors' "$TMP/two.out"
+
+BADID="$TMP/badid"
+cp -R "$BARE" "$BADID"
+python3 - "$BADID/implementation_ledger.md" <<'PY'
+from pathlib import Path
+import re
+import sys
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+m = re.search(r"^### (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z) —", text, re.M)
+if not m:
+    raise SystemExit("selftest: log heading not found")
+stamp = m.group(1)
+marker = "## Chronological UTC Log"
+idx = text.find(marker)
+nl = text.find("\n", idx)
+extra = f"\n\n### {stamp} — unknown id (ART-001, NOPE-001)\n"
+path.write_text(text[: nl + 1] + extra + text[nl + 1 :], encoding="utf-8")
+PY
+python3 "$BADID/scripts/ledger_check.py" --root "$BADID" >"$TMP/badid.out" 2>&1 || true
+grep -q 'log cites NOPE-001' "$TMP/badid.out"
+grep -q '^0 errors' "$TMP/badid.out"
 
 echo "selftest: ok"

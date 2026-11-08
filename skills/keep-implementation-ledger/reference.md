@@ -81,6 +81,8 @@ Insert directly under the log heading (newest first). At most 6 bullets.
 - <what remains, with task IDs>
 ```
 
+One entry may list several IDs: `(FE-097, FE-098)`.
+
 ## Archive file
 
 Verbatim moves only. Newest first within each section.
