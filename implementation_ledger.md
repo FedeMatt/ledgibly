@@ -6,15 +6,17 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
+| BP-025 | Patch release v0.1.2 so PyPI ships adapters and README | BP-024, DOC-018 | in_progress | pypi.org/project/ledgibly/0.1.2 exists | Cargo.toml 0.1.2 |
+| DOC-018 | README, CLI about, and package description: Cursor is default adapter not Cursor-only | DOC-017 | done | README and Cargo/PyPI description admit other harnesses; Cursor remains default | README.md; Cargo.toml; pyproject.toml; src/main.rs; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:37:29Z |
 | DOC-016 | README logo uses absolute GitHub raw URL so PyPI renders it | DOC-015 | done | PyPI project page shows brand/ledgibly.png after next release | README.md absolute raw URL; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:24:53Z |
 | BP-018 | Patch release v0.1.1 so PyPI picks up the logo README | DOC-016 | done | pypi.org/project/ledgibly/0.1.1 shows the logo | tag v0.1.1; Release 42462566413; pypi 0.1.1 description has raw logo URL; log 2026-11-08T08:24:53Z |
 | DOC-017 | Docs: harness-agnostic core vs adapters for Cursor OpenCode Codex Claude Copilot | | done | docs/ names hub paths and what each tool still needs | docs/02-harnesses.md; plan.md; docs/README.md; log 2026-11-08T08:17:44Z |
-| BP-019 | install-skills also installs to ~/.claude/skills from hub | DOC-017 | pending | Fake-HOME selftest has the three skills under .claude/skills | |
-| BP-020 | Cursor adapter stays default init (.cursor/rules, skills symlink) | DOC-017 | pending | Bare init still Cursor-shaped; documented as adapter | |
-| BP-021 | Claude Code adapter: CLAUDE.md pointer and .claude/skills | DOC-017, BP-019 | pending | --with claude lands those files; no overwrite | |
-| BP-022 | OpenCode adapter: hub enough or optional .opencode/skills overlay | DOC-017 | pending | Docs + optional overlay; selftest if we ship files | |
-| BP-023 | Codex adapter: document AGENTS.md hub; ~/.codex not required | DOC-017 | pending | Docs only unless a gap appears | |
-| BP-024 | Copilot adapter: .github/copilot-instructions.md and/or .github/skills | DOC-017 | pending | --with copilot overlay; AGENTS.md still the profile | |
+| BP-019 | install-skills also installs to ~/.claude/skills from hub | DOC-017 | done | Fake-HOME selftest has the three skills under .claude/skills | src/skills.rs dest_roots; tests/selftest.sh; `bash tests/selftest.sh`; log 2026-11-08T08:37:23Z |
+| BP-020 | Cursor adapter stays default init (.cursor/rules, skills symlink) | DOC-017 | done | Bare init still Cursor-shaped; documented as adapter | template/.cursor/rules; docs/02-harnesses.md; `bash tests/selftest.sh` bare; log 2026-11-08T08:37:24Z |
+| BP-021 | Claude Code adapter: CLAUDE.md pointer and .claude/skills | DOC-017, BP-019 | done | --with claude lands those files; no overwrite | modules/claude/CLAUDE.md; src/init.rs link_hub_skills; `bash tests/selftest.sh`; log 2026-11-08T08:37:25Z |
+| BP-022 | OpenCode adapter: hub enough or optional .opencode/skills overlay | DOC-017 | done | Docs + optional overlay; selftest if we ship files | docs/02-harnesses.md hub-only; no modules/opencode; log 2026-11-08T08:37:26Z |
+| BP-023 | Codex adapter: document AGENTS.md hub; ~/.codex not required | DOC-017 | done | Docs only unless a gap appears | docs/02-harnesses.md; log 2026-11-08T08:37:27Z |
+| BP-024 | Copilot adapter: .github/copilot-instructions.md and/or .github/skills | DOC-017 | done | --with copilot overlay; AGENTS.md still the profile | modules/copilot/.github/copilot-instructions.md; `bash tests/selftest.sh`; log 2026-11-08T08:37:28Z |
 | DOC-015 | Restore short README opener and refresh PyPI badge URL | DOC-014 | done | Tagline and ledger+legible opener restored; badge uses logo=pypi; Start here still uv tool install | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:08:25Z |
 | BP-011 | First PyPI release: Trusted Publishing + tag v0.1.0 | QA-003 | done | `uv tool install ledgibly` installs 0.1.0; pypi.org/project/ledgibly/0.1.0 exists | tag v0.1.0; Release run 42461088507; `uv tool install ledgibly`; `ledgibly --version`; log 2026-11-08T08:03:03Z |
 | DOC-014 | README PyPI version badge after the package is live | BP-011 | done | README shows a PyPI badge; Start here still `uv tool install ledgibly` | README.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:03:03Z |
@@ -57,11 +59,39 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 | 1. Kit in the repo | BP-001, DOC-001, QA-001, BP-002 |
 | 2. Rust CLI on PyPI path | BP-007, BP-008, BP-009, BP-010, DOC-013, QA-003 |
 | 3. First PyPI release | BP-011, DOC-014 |
-| 4. Multi-harness adapters | DOC-017, BP-019, BP-020, BP-021, BP-022, BP-023, BP-024 |
+| 4. Multi-harness adapters | DOC-017, DOC-018, BP-019, BP-020, BP-021, BP-022, BP-023, BP-024, BP-025 |
 
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-08T08:37:29Z — README no longer Cursor-only (DOC-018)
+
+- Tagline “A ledger kit for coding agents.” Cargo/PyPI description and CLI about match. Install-skills destinations and `--with claude,copilot` documented. Cursor remains default adapter.
+
+### 2026-11-08T08:37:28Z — Copilot instructions overlay (BP-024)
+
+- `modules/copilot/.github/copilot-instructions.md` points at plan, ledger, docs, AGENTS.md. No `.github/skills`. Isolated `--with copilot` selftest; bare init has no file.
+
+### 2026-11-08T08:37:27Z — Codex uses AGENTS.md hub (BP-023)
+
+- `docs/02-harnesses.md`: Codex reads `AGENTS.md` and `~/.agents/skills` / `.agents/skills`. No `~/.codex` overlay.
+
+### 2026-11-08T08:37:26Z — OpenCode hub is enough (BP-022)
+
+- `docs/02-harnesses.md`: OpenCode already scans `~/.agents/skills` and `.agents/skills`. No `modules/opencode`.
+
+### 2026-11-08T08:37:25Z — Claude adapter via --with claude (BP-021)
+
+- `modules/claude/CLAUDE.md` pointer. `--with claude` also links `.claude/skills` → `.agents/skills`. Bare init has neither. Selftest isolated + all-modules.
+
+### 2026-11-08T08:37:24Z — Cursor remains default adapter (BP-020)
+
+- Bare init still writes ponytail.mdc and `.cursor/skills` symlink. Documented as adapter in `docs/02-harnesses.md`.
+
+### 2026-11-08T08:37:23Z — install-skills copies to ~/.claude/skills (BP-019)
+
+- `src/skills.rs` dest_roots adds `.claude/skills`. Fake-HOME selftest asserts the three skills there.
 
 ### 2026-11-08T08:24:53Z — Patch release v0.1.1 on PyPI (BP-018)
 

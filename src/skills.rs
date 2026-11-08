@@ -27,7 +27,11 @@ pub fn run(opts: InstallSkillsOptions) -> Result<(), Box<dyn std::error::Error>>
         return Err("ledgibly: no skills embedded".into());
     }
 
-    let dest_roots = [home.join(".cursor/skills"), home.join(".agents/skills")];
+    let dest_roots = [
+        home.join(".cursor/skills"),
+        home.join(".agents/skills"),
+        home.join(".claude/skills"),
+    ];
 
     for name in &skill_names {
         let files = skill_files(name);

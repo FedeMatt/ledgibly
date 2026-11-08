@@ -10,7 +10,7 @@ use std::process::ExitCode;
 #[command(
     name = "ledgibly",
     version,
-    about = "Bootstrap Cursor repos with an implementation ledger"
+    about = "Bootstrap coding-agent repos with an implementation ledger (Cursor default adapter)"
 )]
 struct Cli {
     #[command(subcommand)]
@@ -32,11 +32,11 @@ enum Commands {
         /// Profile verify command
         #[arg(long, default_value = "python3 scripts/ledger_check.py")]
         verify: String,
-        /// Modules: figma,source-docs,python-uv,formatter,database-design,rtk
+        /// Modules: figma,source-docs,python-uv,formatter,database-design,rtk,claude,copilot
         #[arg(long)]
         with: Option<String>,
     },
-    /// Install canonical skills into ~/.cursor/skills and ~/.agents/skills
+    /// Install canonical skills into ~/.agents/skills, ~/.cursor/skills, and ~/.claude/skills
     #[command(name = "install-skills")]
     InstallSkills {
         /// Replace even when contents already match

@@ -20,7 +20,7 @@ APP="$TMP/app"
   --name DemoApp \
   --prefixes "ART FE BE DOC QA" \
   --verify "python3 scripts/ledger_check.py" \
-  --with figma,source-docs,python-uv,formatter,database-design,rtk
+  --with figma,source-docs,python-uv,formatter,database-design,rtk,claude,copilot
 
 if leftover="$(grep -R -n -E '\{\{[A-Z][A-Z0-9_]*\}\}' "$APP" || true)" && [[ -n "$leftover" ]]; then
   echo "selftest: unreplaced placeholders:" >&2
@@ -39,6 +39,10 @@ test -f "$APP/.agents/skills/python-uv-workflow/SKILL.md"
 test -f "$APP/.agents/skills/database-design/SKILL.md"
 test -f "$APP/.cursor/rules/formatting.mdc"
 test -f "$APP/.cursor/rules/rtk.mdc"
+test -f "$APP/CLAUDE.md"
+test -L "$APP/.claude/skills"
+test "$(readlink "$APP/.claude/skills")" = "../.agents/skills"
+test -f "$APP/.github/copilot-instructions.md"
 grep -q 'DemoApp' "$APP/AGENTS.md"
 grep -q 'ART FE BE DOC QA' "$APP/AGENTS.md"
 grep -q '^fileKey' "$APP/AGENTS.md" || grep -q 'fileKey' "$APP/AGENTS.md"
@@ -55,6 +59,9 @@ BARE="$TMP/bare"
 test ! -e "$BARE/docs/ui"
 test ! -f "$BARE/.agents/skills/source-docs/SKILL.md"
 test ! -f "$BARE/.cursor/rules/rtk.mdc"
+test ! -f "$BARE/CLAUDE.md"
+test ! -e "$BARE/.claude/skills"
+test ! -f "$BARE/.github/copilot-instructions.md"
 python3 "$BARE/scripts/ledger_check.py" --root "$BARE"
 
 EXIST="$TMP/existing"
@@ -72,6 +79,19 @@ RTK="$TMP/rtkonly"
 "$LEDGIBLY" init "$RTK" --name RtkApp --with rtk
 test -f "$RTK/.cursor/rules/rtk.mdc"
 
+CLAUDE="$TMP/claudeonly"
+"$LEDGIBLY" init "$CLAUDE" --name ClaudeApp --with claude
+test -f "$CLAUDE/CLAUDE.md"
+test -L "$CLAUDE/.claude/skills"
+test "$(readlink "$CLAUDE/.claude/skills")" = "../.agents/skills"
+test ! -f "$CLAUDE/.github/copilot-instructions.md"
+
+COPILOT="$TMP/copilotonly"
+"$LEDGIBLY" init "$COPILOT" --name CopilotApp --with copilot
+test -f "$COPILOT/.github/copilot-instructions.md"
+test ! -f "$COPILOT/CLAUDE.md"
+test ! -e "$COPILOT/.claude/skills"
+
 if "$LEDGIBLY" init "$APP" --name DemoApp --prefixes "ART DOC QA" --verify "true"; then
   echo "selftest: re-init should have refused to overwrite" >&2
   exit 1
@@ -84,6 +104,9 @@ test -f "$FAKE_HOME/.cursor/skills/keep-implementation-ledger/SKILL.md"
 test -f "$FAKE_HOME/.cursor/skills/code-review/SKILL.md"
 test -f "$FAKE_HOME/.cursor/skills/figma-ui/SKILL.md"
 test -f "$FAKE_HOME/.agents/skills/keep-implementation-ledger/reference.md"
+test -f "$FAKE_HOME/.claude/skills/keep-implementation-ledger/SKILL.md"
+test -f "$FAKE_HOME/.claude/skills/code-review/SKILL.md"
+test -f "$FAKE_HOME/.claude/skills/figma-ui/SKILL.md"
 # Second run with matching contents should skip
 HOME="$FAKE_HOME" "$LEDGIBLY" install-skills >"$TMP/skills2.out"
 grep -q 'already installed' "$TMP/skills2.out"

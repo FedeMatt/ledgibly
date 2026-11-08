@@ -43,6 +43,12 @@ pub fn run(opts: InitOptions) -> Result<(), Box<dyn std::error::Error>> {
     if path_exists_or_symlink(&skills_link) {
         existing.push(skills_link);
     }
+    if modules.iter().any(|m| m == "claude") {
+        let claude_link = target.join(".claude/skills");
+        if path_exists_or_symlink(&claude_link) {
+            existing.push(claude_link);
+        }
+    }
 
     if !existing.is_empty() {
         eprintln!("ledgibly: refusing to overwrite:");
@@ -81,7 +87,7 @@ pub fn run(opts: InitOptions) -> Result<(), Box<dyn std::error::Error>> {
 
     append_docs_index(&target)?;
     make_checker_executable(&target.join("scripts/ledger_check.py"))?;
-    link_cursor_skills(&target)?;
+    link_hub_skills(&target, modules.iter().any(|m| m == "claude"))?;
 
     println!("ledgibly: created {} ({})", target.display(), name);
     println!("ledgibly: remaining <fill me> lines:");
@@ -309,33 +315,45 @@ fn make_checker_executable(path: &Path) -> io::Result<()> {
     Ok(())
 }
 
-fn link_cursor_skills(target: &Path) -> Result<(), Box<dyn std::error::Error>> {
-    let link = target.join(".cursor/skills");
+fn link_hub_skills(target: &Path, also_claude: bool) -> Result<(), Box<dyn std::error::Error>> {
     let agents = target.join(".agents/skills");
     fs::create_dir_all(agents.parent().unwrap_or(target))?;
     fs::create_dir_all(&agents)?;
+    symlink_to_hub(&target.join(".cursor/skills"), &agents)?;
+    if also_claude {
+        symlink_to_hub(&target.join(".claude/skills"), &agents)?;
+    }
+    Ok(())
+}
+
+fn symlink_to_hub(link: &Path, agents: &Path) -> Result<(), Box<dyn std::error::Error>> {
+    if let Some(parent) = link.parent() {
+        fs::create_dir_all(parent)?;
+    }
 
     #[cfg(unix)]
     {
-        std::os::unix::fs::symlink("../.agents/skills", &link)?;
+        let _ = agents;
+        std::os::unix::fs::symlink("../.agents/skills", link)?;
     }
 
     #[cfg(windows)]
     {
-        match std::os::windows::fs::symlink_dir("../.agents/skills", &link) {
+        match std::os::windows::fs::symlink_dir("../.agents/skills", link) {
             Ok(()) => {}
             Err(e) => {
                 eprintln!(
-                    "ledgibly: warning: could not symlink .cursor/skills ({e}); copying instead"
+                    "ledgibly: warning: could not symlink {} ({e}); copying instead",
+                    link.display()
                 );
-                copy_dir_recursive(&agents, &link)?;
+                copy_dir_recursive(agents, link)?;
             }
         }
     }
 
     #[cfg(not(any(unix, windows)))]
     {
-        copy_dir_recursive(&agents, &link)?;
+        copy_dir_recursive(agents, link)?;
     }
 
     Ok(())
@@ -426,6 +444,9 @@ mod tests {
 
     #[test]
     fn valid_modules_from_embed() {
-        assert!(embed::module_names().contains("figma"));
+        let names = embed::module_names();
+        assert!(names.contains("figma"));
+        assert!(names.contains("claude"));
+        assert!(names.contains("copilot"));
     }
 }

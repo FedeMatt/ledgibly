@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <em>A ledger kit for Cursor agents.</em>
+  <em>A ledger kit for coding agents.</em>
 </p>
 
 <p align="center">
@@ -23,12 +23,12 @@
 
 # Ledgibly
 
-**Ledgibly** aims to keep coding agents more reliable and makes them a better partner to tackle complex projects. The name comes from ledger + legible: one task table (`implementation_ledger.md`) is the only place status is asserted, with evidence and a newest-first UTC log. `plan.md` is the scope. `docs/` is how the system works. The README is install and run. Per-repo facts live in one `AGENTS.md` section so the skills stay generic. At the moment the kit is specialized for Cursor.
+**Ledgibly** aims to keep coding agents more reliable and makes them a better partner to tackle complex projects. The name comes from ledger + legible: one task table (`implementation_ledger.md`) is the only place status is asserted, with evidence and a newest-first UTC log. `plan.md` is the scope. `docs/` is how the system works. The README is install and run. Per-repo facts live in one `AGENTS.md` section so the skills stay generic. Cursor is the default adapter; OpenCode, Codex, Claude Code, and GitHub Copilot use the same hub. Paths: [docs/02-harnesses.md](docs/02-harnesses.md).
 
 # So, what can I do with this software?
 
 * Start a new repo that already has a plan, a ledger, docs, an agent profile, and a checker.
-* Give work a stable ID **before** anyone writes code. Cursor plan todos become rows first.
+* Give work a stable ID **before** anyone writes code. Plan todos (including Cursor plans) become rows first.
 * Require evidence for `done`: paths plus commands that passed. Status is not restated in docs or the README.
 * Install the same three skills (`keep-implementation-ledger`, `code-review`, `figma-ui`) into every machine you use for this work.
 
@@ -42,7 +42,7 @@
 
 # How to use this project?
 
-This is a working template for the main case: Cursor, one ledger, a few skills. It does not try to cover every editor. If you have a coding agent, use it as the interface: the skills say when to add a row; `scripts/ledger_check.py` says when the table is wrong. Optional modules (`figma`, `source-docs`, `python-uv`, `formatter`, `database-design`, `rtk`) are overlays, not the default.
+Default case: Cursor, one ledger, a few skills. Other harnesses use the same hub; see [docs/02-harnesses.md](docs/02-harnesses.md). If you have a coding agent, use it as the interface: the skills say when to add a row; `scripts/ledger_check.py` says when the table is wrong. Optional modules (`figma`, `source-docs`, `python-uv`, `formatter`, `database-design`, `rtk`, `claude`, `copilot`) are overlays, not the default.
 
 ## Start here
 
@@ -52,7 +52,7 @@ uv tool install ledgibly
 ledgibly install-skills
 ```
 
-After a kit upgrade, re-run `ledgibly install-skills` so copied skills pick up changes.
+Copies canonical skills into `~/.agents/skills` (hub), `~/.cursor/skills` (Cursor default), and `~/.claude/skills` (Claude Code). After a kit upgrade, re-run `ledgibly install-skills` so copied skills pick up changes.
 
 Then bootstrap a new repo:
 
@@ -61,10 +61,10 @@ ledgibly init /path/to/new-repo \
   --name MyApp \
   --prefixes "ART FE BE DOC QA" \
   --verify "cd frontend && npm test" \
-  --with figma,source-docs,python-uv,formatter,database-design,rtk
+  --with figma,source-docs,python-uv,formatter,database-design,rtk,claude,copilot
 ```
 
-`--with` is optional. `ledgibly init` refuses to overwrite existing files. It copies `template/`, overlays modules, and replaces `{{PROJECT}}` / `{{PREFIXES}}` / `{{VERIFY}}` / `{{DATE}}` only in those copied files. It creates `.cursor/skills -> ../.agents/skills`, and prints remaining `<fill me>` lines. Seed rows use `ART-`; if `--prefixes` omits `ART`, init prepends it. The target gets a copied stdlib `scripts/ledger_check.py` and does not depend on the `ledgibly` package at runtime.
+`--with` is optional. `ledgibly init` refuses to overwrite existing files. It copies `template/`, overlays modules, and replaces `{{PROJECT}}` / `{{PREFIXES}}` / `{{VERIFY}}` / `{{DATE}}` only in those copied files. Bare init is the Cursor adapter: `.cursor/skills -> ../.agents/skills`. `--with claude` adds `CLAUDE.md` and `.claude/skills` → `.agents/skills`. `--with copilot` adds `.github/copilot-instructions.md`. Init prints remaining `<fill me>` lines. Seed rows use `ART-`; if `--prefixes` omits `ART`, init prepends it. The target gets a copied stdlib `scripts/ledger_check.py` and does not depend on the `ledgibly` package at runtime.
 
 Fill the Agent profile (docs map, pre-checks, Review trace), then start from the first `pending` row.
 
@@ -108,9 +108,12 @@ implementation_ledger_archive.md  Verbatim overflow
 README.md                         Install and run
 docs/README.md                    Chapter index
 docs/01-architecture.md           First chapter
-.cursor/rules/ponytail.mdc        Lazy-senior-dev ladder
+.cursor/rules/ponytail.mdc        Lazy-senior-dev ladder (Cursor adapter)
 .agents/skills/                   Project skills (modules add more)
 .cursor/skills -> ../.agents/skills
+CLAUDE.md                         Claude adapter (`--with claude`)
+.claude/skills -> ../.agents/skills
+.github/copilot-instructions.md   Copilot adapter (`--with copilot`)
 scripts/ledger_check.py           Structural checks
 ```
 
