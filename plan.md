@@ -13,7 +13,7 @@ A reusable implementation-ledger framework for Cursor-driven repos: templates, c
 - `skills/` — canonical user-level skills (`keep-implementation-ledger`, `code-review`, `figma-ui`). Installed into `~/.cursor/skills` and `~/.agents/skills` by `ledgibly install-skills`.
 - `template/` — files `ledgibly init` copies into a target repo (AGENTS.md profile, plan, ledger, docs, ponytail, checker).
 - `modules/` — opt-in overlays (`figma`, `source-docs`, `python-uv`, `formatter`, `database-design`, `rtk`).
-- Rust CLI (`ledgibly`) — maturin `bindings = "bin"` wheel; embeds `template/`, `modules/`, and `skills/`; subcommands `init` and `install-skills`.
+- Rust CLI (`ledgibly`) — maturin `bindings = "bin"` wheel published to PyPI as platform wheels; embeds `template/`, `modules/`, and `skills/`; subcommands `init` and `install-skills`.
 - `template/scripts/ledger_check.py` — structural ledger checks (stdlib only). Copied into targets; product repos do not depend on the `ledgibly` package at runtime.
 - This repository tracks kit work with the same document roles and prefixes BP / DOC / QA.
 

@@ -13,6 +13,7 @@
 </p>
 
 <p align="center">
+  <a href="https://pypi.org/project/ledgibly/"><img src="https://img.shields.io/pypi/v/ledgibly.svg" alt="PyPI version" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" /></a>
 </p>
 
