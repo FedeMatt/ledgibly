@@ -7,6 +7,8 @@ use time::{format_description::well_known::Rfc3339, OffsetDateTime};
 
 pub struct InstallSkillsOptions {
     pub force: bool,
+    /// Also copy into `~/.claude/skills` (Claude Code does not read the hub).
+    pub claude: bool,
     /// Override home for tests. Defaults to `dirs`-less `HOME` / `USERPROFILE`.
     pub home: Option<PathBuf>,
 }
@@ -27,11 +29,10 @@ pub fn run(opts: InstallSkillsOptions) -> Result<(), Box<dyn std::error::Error>>
         return Err("ledgibly: no skills embedded".into());
     }
 
-    let dest_roots = [
-        home.join(".cursor/skills"),
-        home.join(".agents/skills"),
-        home.join(".claude/skills"),
-    ];
+    let mut dest_roots = vec![home.join(".agents/skills")];
+    if opts.claude {
+        dest_roots.push(home.join(".claude/skills"));
+    }
 
     for name in &skill_names {
         let files = skill_files(name);
@@ -40,8 +41,9 @@ pub fn run(opts: InstallSkillsOptions) -> Result<(), Box<dyn std::error::Error>>
         }
         for dest_root in &dest_roots {
             fs::create_dir_all(dest_root)?;
-            install_one(name, &files, dest_root, &ts, opts.force)?;
+            install_one(name, &files, dest_root, &home, &ts, opts.force)?;
         }
+        retire_leftover_cursor(&home, name, &ts)?;
     }
 
     println!("ledgibly: install-skills done (copy)");
@@ -95,10 +97,25 @@ fn skill_files(name: &str) -> BTreeMap<String, Vec<u8>> {
     map
 }
 
+fn kit_backup_dir(home: &Path, ts: &str, label: &str) -> PathBuf {
+    home.join(".ledgibly/backups").join(ts).join(label)
+}
+
+fn dest_backup_label(dest_root: &Path) -> String {
+    dest_root
+        .parent()
+        .and_then(|p| p.file_name())
+        .and_then(|s| s.to_str())
+        .unwrap_or("skills")
+        .trim_start_matches('.')
+        .to_string()
+}
+
 fn install_one(
     name: &str,
     files: &BTreeMap<String, Vec<u8>>,
     dest_root: &Path,
+    home: &Path,
     ts: &str,
     force: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
@@ -108,18 +125,37 @@ fn install_one(
             println!("already installed: {}", dest.display());
             return Ok(());
         }
-        let bak = dest_root.join(format!(".backup-{ts}"));
-        fs::create_dir_all(&bak)?;
-        let bak_dest = bak.join(name);
-        // Move aside (rename). If cross-device fails, copy+remove.
-        if fs::rename(&dest, &bak_dest).is_err() {
-            copy_path_recursive(&dest, &bak_dest)?;
-            remove_path(&dest)?;
-        }
-        println!("backed up {} -> {}", dest.display(), bak_dest.display());
+        let bak = kit_backup_dir(home, ts, &dest_backup_label(dest_root));
+        move_aside(&dest, &bak, name)?;
     }
     write_skill_tree(&dest, files)?;
     println!("copied {name} -> {}", dest.display());
+    Ok(())
+}
+
+fn retire_leftover_cursor(
+    home: &Path,
+    name: &str,
+    ts: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let cursor_root = home.join(".cursor/skills");
+    let dest = cursor_root.join(name);
+    if !path_exists_or_symlink(&dest) {
+        return Ok(());
+    }
+    let bak = kit_backup_dir(home, ts, "cursor");
+    move_aside(&dest, &bak, name)?;
+    Ok(())
+}
+
+fn move_aside(src: &Path, bak_dir: &Path, name: &str) -> Result<(), Box<dyn std::error::Error>> {
+    fs::create_dir_all(bak_dir)?;
+    let bak_dest = bak_dir.join(name);
+    if fs::rename(src, &bak_dest).is_err() {
+        copy_path_recursive(src, &bak_dest)?;
+        remove_path(src)?;
+    }
+    println!("backed up {} -> {}", src.display(), bak_dest.display());
     Ok(())
 }
 

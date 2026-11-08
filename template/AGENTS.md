@@ -20,6 +20,6 @@ Review
 
 <!-- end:agent-profile -->
 
-Project skills live in [`.agents/skills/`](.agents/skills/). `.cursor/skills` is a symlink to that directory. User-level skills (`keep-implementation-ledger`, `code-review`, `figma-ui`) come from the Ledgibly kit.
+Project skills live in [`.agents/skills/`](.agents/skills/). User-level skills (`keep-implementation-ledger`, `code-review`, `figma-ui`) come from the Ledgibly kit. Development policy is `.cursor/rules/*.mdc` (ponytail always; others from `--with`).
 
 Do not commit or push unless the user asks.

@@ -39,10 +39,6 @@ pub fn run(opts: InitOptions) -> Result<(), Box<dyn std::error::Error>> {
     for mod_name in &modules {
         collect_conflicts(&target, module_rel_paths(mod_name), &mut existing);
     }
-    let skills_link = target.join(".cursor/skills");
-    if path_exists_or_symlink(&skills_link) {
-        existing.push(skills_link);
-    }
     if modules.iter().any(|m| m == "claude") {
         let claude_link = target.join(".claude/skills");
         if path_exists_or_symlink(&claude_link) {
@@ -319,7 +315,6 @@ fn link_hub_skills(target: &Path, also_claude: bool) -> Result<(), Box<dyn std::
     let agents = target.join(".agents/skills");
     fs::create_dir_all(agents.parent().unwrap_or(target))?;
     fs::create_dir_all(&agents)?;
-    symlink_to_hub(&target.join(".cursor/skills"), &agents)?;
     if also_claude {
         symlink_to_hub(&target.join(".claude/skills"), &agents)?;
     }

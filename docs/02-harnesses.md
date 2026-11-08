@@ -18,38 +18,40 @@ Do **not** maintain separate skill copies per product. Install once into the hub
 ```text
 skills/  (canonical in this repo)
    │
-   ▼  ledgibly install-skills
-~/.agents/skills/   ← hub (Codex, OpenCode, Copilot, Cursor)
-   │
-   ├── also ~/.cursor/skills/     (Cursor default)
-   └── also ~/.claude/skills/     (Claude Code; BP-019)
+   ▼  ledgibly install-skills          → ~/.agents/skills/   hub
+   └──  ledgibly install-skills --claude  → ~/.claude/skills/  Claude only
 ```
 
-`ledgibly install-skills` copies the three canonical skills into all three user homes (BP-009, BP-019).
+Kit writes (DOC-019): hub only by default (BP-028). No `~/.cursor/skills` and no project `.cursor/skills` link (BP-030). `--claude` / `--with claude` are the Claude extra home. Replaced skills go to `~/.ledgibly/backups/<ts>/`, not inside a scan root (BP-029).
 
 ## Path table
 
+What each tool **reads** (vendor docs, checked 2026-11-08). Kit writes are the architecture bullets above, not this table.
+
 | Tool | Always-on profile | User skills | Project skills | Adapter |
 |---|---|---|---|---|
-| **Cursor** (default) | `AGENTS.md` `## Agent profile` | `~/.cursor/skills` and `~/.agents/skills` | `.cursor/skills` → `.agents/skills`; `.cursor/rules/*.mdc` | Bare `init` (BP-020) |
+| **Cursor** (default) | `AGENTS.md` `## Agent profile` | `~/.agents/skills` (also `~/.cursor/skills`, `~/.claude/skills`) | `.agents/skills` (also `.cursor/skills`, `.claude/skills` if present); `.cursor/rules/*.mdc` (BP-027) | Bare `init` writes rules, not a `.cursor/skills` link (BP-020, BP-030) |
 | **Codex** | `AGENTS.md` (native) | `~/.agents/skills` | `.agents/skills` | Hub is enough; `~/.codex` not required (BP-023) |
-| **OpenCode** | `AGENTS.md` | `~/.agents/skills` (also `~/.config/opencode/skills`) | `.agents/skills` (also `.opencode/skills`, `.claude/skills`) | Hub is enough; no `.opencode/skills` overlay (BP-022) |
-| **Claude Code** | `CLAUDE.md` pointer; `AGENTS.md` stays the profile | `~/.claude/skills` (does not document the hub) | `.claude/skills` → `.agents/skills` | `--with claude` (BP-021) |
-| **GitHub Copilot** | `.github/copilot-instructions.md` pointer; `AGENTS.md` still the profile | `~/.agents/skills` (also `~/.copilot/skills`) | `.agents/skills` (also `.github/skills`) | `--with copilot` instructions only (BP-024) |
+| **OpenCode** | `AGENTS.md` | `~/.agents/skills` (also `~/.config/opencode/skills`, `~/.claude/skills`) | `.agents/skills` (also `.opencode/skills`, `.claude/skills`) | Hub is enough; no `.opencode/skills` overlay (BP-022) |
+| **Claude Code** | `CLAUDE.md` first line `@AGENTS.md` (BP-026); else Claude skips `AGENTS.md` | `~/.claude/skills` only | `.claude/skills` → `.agents/skills` | `--with claude`; `install-skills --claude` (BP-021) |
+| **GitHub Copilot** | `.github/copilot-instructions.md`; `AGENTS.md` still the profile | `~/.agents/skills` (also `~/.copilot/skills`, `~/.claude/skills`) | `.agents/skills` (also `.github/skills`, `.claude/skills`) | `--with copilot` instructions only (BP-024) |
+
+Sources (2026-11-08): [Cursor skills](https://cursor.com/docs/skills); [Claude CLAUDE.md](https://code.claude.com/docs/en/claude-md); [Claude skills](https://code.claude.com/docs/en/skills); [Codex skills](https://learn.chatgpt.com/docs/build-skills.md), [Codex customization](https://learn.chatgpt.com/docs/customization/overview); [OpenCode skills](https://opencode.ai/docs/skills/); [OpenCode duplicate names](https://github.com/anomalyco/opencode/issues/29950); [Copilot agent skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills).
 
 ## Design rules
 
 1. **One SKILL.md source.** Adapters may symlink or copy into a second directory; they must not diverge content.
 2. **AGENTS.md stays the profile.** Per-repo facts stay in `## Agent profile`. Skills stay generic.
-3. **Claude is the odd one out** for skills discovery: it needs `~/.claude/skills` and `.claude/skills`. That is why install-skills copies there and `--with claude` links the project dir (BP-019, BP-021).
+3. **Claude is the only second home, and it is opt-in.** Claude does not read the hub, so `install-skills --claude` copies `~/.claude/skills` and `--with claude` links `.claude/skills` (BP-019, BP-021, DOC-019). Cursor, OpenCode, and Copilot also scan `.claude` / `~/.claude`, so a Claude extra home can surface each skill twice. For OpenCode, set `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1` when using `--with claude`.
 4. **OpenCode and Codex already meet the hub.** Document that; do not ship duplicate trees (BP-022, BP-023).
 5. **Copilot** already reads the hub for skills. `--with copilot` only adds `.github/copilot-instructions.md` pointing at the same document roles (BP-024).
+6. **Always-on rules** stay in `.cursor/rules/*.mdc`. `AGENTS.md` points other harnesses at that glob; Claude imports `@.cursor/rules/ponytail.mdc` (BP-027).
 
 ## Smoke check
 
-Selftest asserts files and paths. It does not start Cursor, Claude Code, Codex, OpenCode, or Copilot. After `uv tool install ledgibly==0.1.2` (BP-025) or install from this repo, run `ledgibly install-skills` and `ledgibly init /path/to/repo --with claude,copilot`, then:
+Selftest asserts files and paths. It does not start Cursor, Claude Code, Codex, OpenCode, or Copilot. After `uv tool install ledgibly==0.1.2` (BP-025) or install from this repo, run `ledgibly install-skills` (add `--claude` for Claude Code) and `ledgibly init /path/to/repo --with claude,copilot`, then:
 
 - **Cursor** (BP-020): skills show under user skills; `AGENTS.md` Agent profile loads; `.cursor/rules/ponytail.mdc` is present.
-- **Claude Code** (BP-019, BP-021): `~/.claude/skills/keep-implementation-ledger/SKILL.md` exists; `CLAUDE.md` points at `AGENTS.md`; project `.claude/skills` follows `.agents/skills`.
+- **Claude Code** (BP-019, BP-021, BP-026): `~/.claude/skills/keep-implementation-ledger/SKILL.md` exists after `install-skills --claude`; `CLAUDE.md` starts with `@AGENTS.md`; project `.claude/skills` follows `.agents/skills`.
 - **Codex / OpenCode** (BP-022, BP-023): `AGENTS.md` plus the hub; no extra files required.
 - **Copilot** (BP-024): `.github/copilot-instructions.md` is present; skills load from `.agents/skills`.

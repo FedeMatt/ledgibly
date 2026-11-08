@@ -52,7 +52,7 @@ uv tool install ledgibly
 ledgibly install-skills
 ```
 
-Copies canonical skills into `~/.agents/skills` (hub), `~/.cursor/skills` (Cursor default), and `~/.claude/skills` (Claude Code). After a kit upgrade, re-run `ledgibly install-skills` so copied skills pick up changes.
+Copies canonical skills into `~/.agents/skills` (hub). Claude Code does not read the hub; add it with `ledgibly install-skills --claude` (`~/.claude/skills`). After a kit upgrade, re-run `ledgibly install-skills` so copied skills pick up changes.
 
 Then bootstrap a new repo:
 
@@ -64,7 +64,7 @@ ledgibly init /path/to/new-repo \
   --with figma,source-docs,python-uv,formatter,database-design,rtk,claude,copilot
 ```
 
-`--with` is optional. `ledgibly init` refuses to overwrite existing files. It copies `template/`, overlays modules, and replaces `{{PROJECT}}` / `{{PREFIXES}}` / `{{VERIFY}}` / `{{DATE}}` only in those copied files. Bare init is the Cursor adapter: `.cursor/skills -> ../.agents/skills`. `--with claude` adds `CLAUDE.md` and `.claude/skills` → `.agents/skills`. `--with copilot` adds `.github/copilot-instructions.md`. Init prints remaining `<fill me>` lines. Seed rows use `ART-`; if `--prefixes` omits `ART`, init prepends it. The target gets a copied stdlib `scripts/ledger_check.py` and does not depend on the `ledgibly` package at runtime.
+`--with` is optional. `ledgibly init` refuses to overwrite existing files. It copies `template/`, overlays modules, and replaces `{{PROJECT}}` / `{{PREFIXES}}` / `{{VERIFY}}` / `{{DATE}}` only in those copied files. Bare init is the Cursor adapter: `.cursor/rules/ponytail.mdc` and `.agents/skills`. `--with claude` adds `CLAUDE.md` and `.claude/skills` → `.agents/skills`. `--with copilot` adds `.github/copilot-instructions.md`. Init prints remaining `<fill me>` lines. Seed rows use `ART-`; if `--prefixes` omits `ART`, init prepends it. The target gets a copied stdlib `scripts/ledger_check.py` and does not depend on the `ledgibly` package at runtime.
 
 Fill the Agent profile (docs map, pre-checks, Review trace), then start from the first `pending` row.
 
@@ -110,7 +110,6 @@ docs/README.md                    Chapter index
 docs/01-architecture.md           First chapter
 .cursor/rules/ponytail.mdc        Lazy-senior-dev ladder (Cursor adapter)
 .agents/skills/                   Project skills (modules add more)
-.cursor/skills -> ../.agents/skills
 CLAUDE.md                         Claude adapter (`--with claude`)
 .claude/skills -> ../.agents/skills
 .github/copilot-instructions.md   Copilot adapter (`--with copilot`)

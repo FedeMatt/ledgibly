@@ -11,11 +11,11 @@ A reusable implementation-ledger framework for coding-agent repos: templates, ca
 ## Architecture
 
 - **Core** — `plan.md`, `implementation_ledger.md`, `docs/`, `AGENTS.md`, copied stdlib `scripts/ledger_check.py`, and canonical `skills/` (one tree, not forked per product).
-- **Skill hub** — `~/.agents/skills` (user) and `.agents/skills` (project). Several agents already load this path; adapters only add a second home when a tool cannot see the hub.
+- **Skill hub** — `~/.agents/skills` (user) and `.agents/skills` (project). Several agents already load this path. `install-skills` writes only the user hub; `--claude` is the only extra user home (`~/.claude/skills`), because Claude Code does not read the hub (DOC-019).
 - `template/` — files `ledgibly init` copies into a target repo (Agent profile, plan, ledger, docs, ponytail, checker).
 - `modules/` — opt-in overlays (`figma`, `source-docs`, `python-uv`, `formatter`, `database-design`, `rtk`, and future harness overlays).
 - Rust CLI (`ledgibly`) — maturin `bindings = "bin"` wheel published to PyPI as platform wheels; embeds `template/`, `modules/`, and `skills/`; subcommands `init` and `install-skills`.
-- **Cursor adapter (default)** — also installs to `~/.cursor/skills`, copies `.cursor/rules`, and symlinks `.cursor/skills` → `.agents/skills`.
+- **Cursor adapter (default)** — copies `.cursor/rules`. Does not write `~/.cursor/skills` or symlink `.cursor/skills`; Cursor already reads the hub (DOC-019). `--with claude` still links `.claude/skills` → `.agents/skills`.
 - This repository tracks kit work with the same document roles and prefixes BP / DOC / QA.
 
 ## Development policy

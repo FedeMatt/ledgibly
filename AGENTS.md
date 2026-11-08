@@ -14,8 +14,8 @@ Ledger
 - picking: first `pending` row whose dependencies are `done`
 
 Review
-- exclude: `.git/`, `target/`, backups under `~/.cursor/skills/.backup-*`, generated `mktemp` dirs from selftest
-- trace: `ledgibly init` embeds `template/` + `modules/` → placeholders → symlink → `ledger_check.py` reads the ledger
+- exclude: `.git/`, `target/`, backups under `~/.ledgibly/backups/`, generated `mktemp` dirs from selftest
+- trace: `ledgibly init` embeds `template/` + `modules/` → placeholders → `.agents/skills` (optional `.claude/skills` link) → `ledger_check.py` reads the ledger
 - extra priorities: no overwrite; skills stay generic (per-repo facts only in Agent profile)
 
 <!-- end:agent-profile -->

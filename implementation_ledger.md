@@ -6,6 +6,18 @@ Living task list. Scope: [plan.md](plan.md). Statuses: `pending`, `in_progress`,
 
 | ID | Description | Dependencies | Status | Acceptance condition | Evidence |
 |---|---|---|---|---|---|
+| DOC-019 | Harness docs cite vendor URLs; plan.md records hub-only skills and no .cursor/skills link | | done | docs/02-harnesses.md path table cites Cursor, Claude, Codex, OpenCode, Copilot URLs with checked date; plan.md Architecture matches BP-028 and BP-030 | plan.md; docs/02-harnesses.md; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T09:14:37Z |
+| BP-026 | CLAUDE.md imports @AGENTS.md instead of linking to it | | done | First line of modules/claude/CLAUDE.md is @AGENTS.md; selftest asserts it | modules/claude/CLAUDE.md; tests/selftest.sh; `bash tests/selftest.sh`; log 2026-11-08T09:14:56Z |
+| BP-027 | Always-on .cursor/rules reach Codex, OpenCode, Copilot, and Claude | BP-026 | done | template/AGENTS.md tells agents to read .cursor/rules/*.mdc; CLAUDE.md imports @.cursor/rules/ponytail.mdc; selftest checks both | template/AGENTS.md; modules/claude/CLAUDE.md; tests/selftest.sh; `bash tests/selftest.sh`; log 2026-11-08T09:15:18Z |
+| BP-028 | install-skills writes only ~/.agents/skills; --claude adds ~/.claude/skills | DOC-019 | done | Fake-HOME selftest: no ~/.cursor/skills; --claude writes ~/.claude/skills; leftover ~/.cursor kit skill backed up; README Start here and main.rs help match | src/skills.rs; src/main.rs; README.md; tests/selftest.sh; `cargo test`; `bash tests/selftest.sh`; log 2026-11-08T09:16:16Z |
+| BP-029 | install-skills writes backups outside folders tools scan | BP-028 | done | Backups land in ~/.ledgibly/backups/<ts>/; selftest finds no .backup-* under any skill folder | src/skills.rs; tests/selftest.sh; AGENTS.md; `cargo test`; `bash tests/selftest.sh`; log 2026-11-08T09:16:50Z |
+| BP-030 | Bare init stops creating the .cursor/skills symlink | DOC-019 | done | Bare selftest has no .cursor/skills; --with claude still links .claude/skills; conflict check, template/AGENTS.md, README What a new repo gets match | src/init.rs; template/AGENTS.md; README.md; tests/selftest.sh; `cargo test`; `bash tests/selftest.sh`; log 2026-11-08T09:17:29Z |
+| BP-031 | Skills and template/AGENTS.md use wording that fits any harness | BP-030 | pending | keep-implementation-ledger says harness plan todos; figma-ui loads figma-design-to-code only if the harness provides it | |
+| BP-032 | ledger_check warns when a done row depends on a row that is not done | | pending | Selftest fixture prints the warning; this ledger still has 0 errors | |
+| BP-033 | ledger_check accepts (A-1, A-2) in a log heading | | pending | Each ID in the heading is checked against the table; selftest covers it; reference.md shows the form | |
+| QA-006 | CI runs cargo test --locked on Linux, macOS, Windows; selftest on Linux and macOS | BP-030 | pending | Windows job runs init --with claude and confirms CLAUDE.md and .claude/skills exist | |
+| QA-007 | Release fails early when the tag does not match the Cargo.toml version | | pending | release.yml step compares GITHUB_REF_NAME with cargo metadata version before any wheel job runs | |
+| QA-008 | Manual smoke: each harness loads the profile and shared skills after a fresh init | BP-026, BP-027, BP-028, BP-030 | pending | Environment evidence has a ### QA-008 entry per harness with observed load (or blocked if not installed) | |
 | BP-025 | Patch release v0.1.2 so PyPI ships adapters and README | BP-024, DOC-018 | done | pypi.org/project/ledgibly/0.1.2 exists | tag v0.1.2; Release 42464038529; pypi 0.1.2 description has coding-agents tagline; log 2026-11-08T08:45:59Z |
 | DOC-018 | README, CLI about, and package description: Cursor is default adapter not Cursor-only | DOC-017 | done | README and Cargo/PyPI description admit other harnesses; Cursor remains default | README.md; Cargo.toml; pyproject.toml; src/main.rs; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:37:29Z |
 | DOC-016 | README logo uses absolute GitHub raw URL so PyPI renders it | DOC-015 | done | PyPI project page shows brand/ledgibly.png after next release | README.md absolute raw URL; docs/01-framework.md; `python3 template/scripts/ledger_check.py`; log 2026-11-08T08:24:53Z |
@@ -64,6 +76,51 @@ Multi-host or multi-OS notes live here as `### <ID>` subsections, not in the tab
 ## Chronological UTC Log
 
 Newest first. Older entries: [archive](implementation_ledger_archive.md).
+
+### 2026-11-08T09:17:29Z — Bare init no longer links .cursor/skills (BP-030)
+
+- `src/init.rs` creates `.agents/skills` and, with `--with claude`, `.claude/skills` only. Conflict check no longer treats `.cursor/skills` as an init file.
+- `template/AGENTS.md` and README tree drop the symlink. Selftest asserts it is absent on bare and all-modules inits.
+- `cargo test`; `bash tests/selftest.sh`; `python3 template/scripts/ledger_check.py`.
+
+### 2026-11-08T09:16:50Z — Skill backups live under ~/.ledgibly/backups (BP-029)
+
+- `src/skills.rs` writes replacements to `~/.ledgibly/backups/<ts>/<home>/`, including leftover `~/.cursor/skills` copies.
+- Selftest asserts no `.backup-*` under skill folders. Kit Review exclude updated.
+- `cargo test`; `bash tests/selftest.sh`; `python3 template/scripts/ledger_check.py`.
+
+### 2026-11-08T09:16:16Z — install-skills writes the hub only (BP-028)
+
+- Default dest is `~/.agents/skills`. `--claude` adds `~/.claude/skills`. Leftover `~/.cursor/skills/<name>` is moved aside.
+- README Start here and `src/main.rs` help match. Fake-HOME selftest covers skip, `--force`, leftover cursor, and no default `.cursor`/`.claude`.
+- `cargo test`; `bash tests/selftest.sh`; `python3 template/scripts/ledger_check.py`.
+
+### 2026-11-08T09:15:18Z — Other harnesses pointed at .cursor/rules (BP-027)
+
+- `template/AGENTS.md` tells agents to read `.cursor/rules/*.mdc`.
+- `modules/claude/CLAUDE.md` imports `@.cursor/rules/ponytail.mdc` after `@AGENTS.md`.
+- `bash tests/selftest.sh`; `python3 template/scripts/ledger_check.py`.
+
+### 2026-11-08T09:14:56Z — CLAUDE.md imports AGENTS.md (BP-026)
+
+- `modules/claude/CLAUDE.md` first line is `@AGENTS.md` so Claude Code loads the profile.
+- `tests/selftest.sh` asserts that first line on all-modules and `--with claude` inits.
+- `bash tests/selftest.sh`; `python3 template/scripts/ledger_check.py`.
+
+### 2026-11-08T09:14:37Z — Hub-only architecture and vendor-cited harness table (DOC-019)
+
+- `plan.md`: `install-skills` writes `~/.agents/skills`; `--claude` is the only extra user home; Cursor adapter copies `.cursor/rules` and does not write or symlink `.cursor/skills`.
+- `docs/02-harnesses.md`: path table cites Cursor, Claude, Codex, OpenCode, Copilot URLs (checked 2026-11-08); kit writes vs vendor reads split; OpenCode `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1`.
+- `docs/01-framework.md` cites DOC-019. `python3 template/scripts/ledger_check.py`.
+
+### 2026-11-08T08:54:39Z — Multi-harness review filed as pending rows (DOC-019)
+
+- Cursor skills dirs: https://cursor.com/docs/skills. Copilot: https://docs.github.com/en/copilot/concepts/agents/about-agent-skills. OpenCode: https://opencode.ai/docs/skills/ and issue 29950.
+- Claude: https://code.claude.com/docs/en/claude-md (`@AGENTS.md` import) and https://code.claude.com/docs/en/skills (`.claude/skills` only).
+- High: `modules/claude/CLAUDE.md` markdown-links AGENTS.md, so Claude skips the profile once CLAUDE.md exists.
+- High: `src/skills.rs` dest_roots (lines 31–35) copies each skill into `~/.agents`, `~/.cursor`, and `~/.claude`; Cursor and OpenCode then discover duplicates.
+- High: always-on policy lives only in `template/.cursor/rules/*.mdc`; `template/AGENTS.md` never points other harnesses at it.
+- Pending: DOC-019, BP-026–BP-033, QA-006–QA-008. Decisions: hub-only install-skills (`--claude` extra); drop `.cursor/skills` symlink.
 
 ### 2026-11-08T08:45:59Z — Patch release v0.1.2 on PyPI (BP-025)
 

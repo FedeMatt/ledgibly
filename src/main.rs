@@ -36,12 +36,15 @@ enum Commands {
         #[arg(long)]
         with: Option<String>,
     },
-    /// Install canonical skills into ~/.agents/skills, ~/.cursor/skills, and ~/.claude/skills
+    /// Install canonical skills into ~/.agents/skills (hub). Use --claude for ~/.claude/skills.
     #[command(name = "install-skills")]
     InstallSkills {
         /// Replace even when contents already match
         #[arg(long)]
         force: bool,
+        /// Also copy into ~/.claude/skills (Claude Code does not read the hub)
+        #[arg(long)]
+        claude: bool,
     },
 }
 
@@ -78,8 +81,12 @@ fn main() -> ExitCode {
             verify,
             with,
         }),
-        Commands::InstallSkills { force } => {
-            skills::run(skills::InstallSkillsOptions { force, home: None })
+        Commands::InstallSkills { force, claude } => {
+            skills::run(skills::InstallSkillsOptions {
+                force,
+                claude,
+                home: None,
+            })
         }
     };
 

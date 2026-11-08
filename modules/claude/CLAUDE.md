@@ -1,4 +1,4 @@
-# Claude Code
+@AGENTS.md
+@.cursor/rules/ponytail.mdc
 
-Always-on profile: [AGENTS.md](AGENTS.md) (`## Agent profile`).
 Project skills: `.claude/skills` → `.agents/skills` (same tree). Do not fork skills.
